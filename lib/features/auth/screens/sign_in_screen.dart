@@ -70,7 +70,8 @@ class _SignInScreenState extends State<SignInScreen> {
               Image.asset(
                   Get.isDarkMode
                       ? Images.logoWithNameWhite
-                      : Images.logoWithNameBlack, height: 75),
+                      : Images.logoWithNameBlack,
+                  height: 75),
               const SizedBox(height: Dimensions.paddingSizeSmall),
               Row(mainAxisAlignment: MainAxisAlignment.center, children: [
                 Text(
@@ -245,7 +246,7 @@ class _SignInScreenState extends State<SignInScreen> {
                     child: Text('sign_up'.tr,
                         style: textMedium.copyWith(
                           decoration: TextDecoration.underline,
-                          color: Theme.of(context).primaryColor,
+                          color: Theme.of(context).colorScheme.surfaceContainer,
                           fontSize: Dimensions.fontSizeSmall,
                         )),
                   )
@@ -263,7 +264,7 @@ class _SignInScreenState extends State<SignInScreen> {
                   Text("terms_and_condition".tr,
                       style: textMedium.copyWith(
                         decoration: TextDecoration.underline,
-                        color: Theme.of(context).primaryColor,
+                        color: Theme.of(context).colorScheme.surfaceContainer,
                         fontSize: Dimensions.fontSizeSmall,
                       )),
                 ],

@@ -152,7 +152,6 @@ class CustomMenuItem extends StatelessWidget {
                   isSelected ? activeIcon : inActiveIcon,
                   width: Dimensions.menuIconSize,
                   height: Dimensions.menuIconSize,
-                  color: Theme.of(context).buttonTheme.colorScheme!.primary,
                 ),
                 isSelected
                     ? Text(name.tr,
