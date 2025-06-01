@@ -231,18 +231,17 @@ class _SplashScreenState extends State<SplashScreen>
                 ? Theme.of(context).primaryColor
                 : Theme.of(context).dialogBackgroundColor),
         alignment: Alignment.bottomCenter,
-        child: Column(
-            mainAxisSize: MainAxisSize.min,
-            mainAxisAlignment: MainAxisAlignment.end,
-            children: [
-              Stack(alignment: AlignmentDirectional.bottomCenter, children: [
-                Container(
-                  transform: Matrix4.translationValues(
-                      0,
-                      320 -
-                          (320 * double.tryParse(_animation.value.toString())!),
-                      0),
-                  child: Column(children: [
+        child: Column(mainAxisAlignment: MainAxisAlignment.center, children: [
+          Stack(alignment: AlignmentDirectional.bottomCenter, children: [
+            Container(
+              transform: Matrix4.translationValues(
+                  0,
+                  320 - (320 * double.tryParse(_animation.value.toString())!),
+                  0),
+              child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.center,
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
                     Opacity(
                       opacity: _animation.value,
                       child: Padding(
@@ -257,24 +256,26 @@ class _SplashScreenState extends State<SplashScreen>
                       ),
                     ),
                     const SizedBox(height: 50),
-                    Image.asset(Images.splashBackgroundOne,
-                        width: Get.width,
-                        height: Get.height / 2,
-                        fit: BoxFit.cover)
+                    // Image.asset(Images.splashBackgroundOne,
+                    //     width: Get.width,
+                    //     height: Get.height / 2,
+                    //     fit: BoxFit.cover)
                   ]),
+            ),
+            Center(
+              child: Container(
+                transform: Matrix4.translationValues(0, 20, 0),
+                child: Padding(
+                  padding: EdgeInsets.symmetric(
+                      horizontal:
+                          (70 * double.tryParse(_animation.value.toString())!)),
+                  // child: Image.asset(Images.splashBackgroundTwo,
+                  //     width: Get.size.width),
                 ),
-                Container(
-                  transform: Matrix4.translationValues(0, 20, 0),
-                  child: Padding(
-                    padding: EdgeInsets.symmetric(
-                        horizontal: (70 *
-                            double.tryParse(_animation.value.toString())!)),
-                    child: Image.asset(Images.splashBackgroundTwo,
-                        width: Get.size.width),
-                  ),
-                ),
-              ]),
-            ]),
+              ),
+            ),
+          ]),
+        ]),
       ),
     );
   }
