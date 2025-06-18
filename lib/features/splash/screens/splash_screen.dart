@@ -226,10 +226,7 @@ class _SplashScreenState extends State<SplashScreen>
   Widget build(BuildContext context) {
     return Scaffold(
       body: Container(
-        decoration: BoxDecoration(
-            color: Get.isDarkMode
-                ? Theme.of(context).primaryColor
-                : Theme.of(context).dialogBackgroundColor),
+        decoration: BoxDecoration(color: Theme.of(context).primaryColor),
         alignment: Alignment.bottomCenter,
         child: Column(mainAxisAlignment: MainAxisAlignment.center, children: [
           Stack(alignment: AlignmentDirectional.bottomCenter, children: [
@@ -244,16 +241,9 @@ class _SplashScreenState extends State<SplashScreen>
                   children: [
                     Opacity(
                       opacity: _animation.value,
-                      child: Padding(
-                        padding: EdgeInsets.only(
-                            left: 120 -
-                                ((120 *
-                                    double.tryParse(
-                                        _animation.value.toString())!))),
-                        child: Get.isDarkMode
-                            ? Image.asset(Images.logoWithNameWhite, width: 160)
-                            : Image.asset(Images.logoWithNameBlack, width: 160),
-                      ),
+                      child: Get.isDarkMode
+                          ? Image.asset(Images.logoWithNameWhite, width: 160)
+                          : Image.asset(Images.logoWithNameBlack, width: 160),
                     ),
                     const SizedBox(height: 50),
                     // Image.asset(Images.splashBackgroundOne,

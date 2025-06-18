@@ -13,6 +13,8 @@ class Images {
   static const String lock = 'assets/image/lock.png';
   static const String person = 'assets/image/person.png';
   static const String password = 'assets/image/password.png';
+  static const String closeIcon = 'assets/image/close.png';
+  static const String clockIcon = 'assets/image/clock.png';
   static const String call = 'assets/image/call.png';
   static const String email = 'assets/image/email.png';
   static const String identity = 'assets/image/identity.png';
@@ -22,6 +24,23 @@ class Images {
   static const String homeOutline = 'assets/image/home_outline.png';
   static const String activityActive = 'assets/image/activity_active.png';
   static const String activityOutline = 'assets/image/activity_outline.png';
+  //new
+  static const String arrowLeft1Icon = 'assets/image/arrow_left_1.png';
+  static const String arrowLeft2Icon = 'assets/image/arrow_left_2.png';
+  static const String arrowLeft = 'assets/image/arrow-left.png';
+  static const String searchNormal = 'assets/image/search-normal.png';
+  static const String gps = 'assets/image/gps.png';
+  static const String breakpoint = 'assets/image/Group_560.png';
+  static const String routeSquare = 'assets/image/route-square.png';
+  static const String navAddTripeIcon = 'assets/image/nav_add_tripe.png';
+  static const String navCalenderIcon = 'assets/image/nav_calendar.png';
+  static const String navCarIcon = 'assets/image/nav_car.png';
+  static const String navNotificationIcon = 'assets/image/nav_notification.png';
+  static const String userIcon = 'assets/image/user.png';
+  static const String calenderDIcon = 'assets/image/calendar.png';
+  static const String windIcon = 'assets/image/wind.png';
+
+  //
   static const String notificationActive =
       'assets/image/notification_active.png';
   static const String notificationOutline =
@@ -208,4 +227,34 @@ class Images {
   static const String animatedCar = 'assets/svg/animated_car.svg';
   static const String animatedBike = 'assets/svg/animated_bike.svg';
   static const String maintenanceSvg = 'assets/svg/maintenance.svg';
+
+  //new
+
+  static const String box = 'assets/image/box.png';
+  static const String ranking = 'assets/image/ranking.png';
+  static const String logoWithName = 'assets/image/logo_with_name.png';
+  static const String dashLine = 'assets/image/dash_line.png';
+  static const String uploadIcon = 'assets/image/parcel_refund.png';
+  static const String audioIcon = 'assets/image/audio.png';
+  static const String cityDriverIcon = 'assets/image/city_driver.png';
+  static const String publishIcon = 'assets/image/publish_icon.png';
+  static const String arrowDownIcon = 'assets/image/arrow-down.png';
+  static const String navProfileIcon = 'assets/image/nav_profile.png';
+  static const String truckIcon = 'assets/image/truck.png';
+  static const String taskIcon = 'assets/image/task-square.png';
+  static const String peopleIcon = 'assets/image/people.png';
+  static const String messageQuestionIcon = 'assets/image/message-question.png';
+  static const String carTripeIcon = 'assets/image/car_tripe.png';
+  static const String calender2Icon = 'assets/image/calender_2.png';
+  static const String addImageIcon = 'assets/image/add_image.png';
+  static const String busIcon = 'assets/image/bus.png';
+  static const String car2Icon = 'assets/image/car_2.png';
+  static const String trashIcon = 'assets/image/trash.png';
+  static const String notificationBingIcon =
+      'assets/image/notification-bing.png';
+  static const String coinIcon = 'assets/image/coin.png';
+  static const String user1Icon = 'assets/image/user_1.png';
+  static const String notification1 = 'assets/image/notification_1.png';
+  static const String arrowDown1 = 'assets/image/arrow_down_1.png';
+  static const String completed1Icon = 'assets/image/completed_1.png';
 }

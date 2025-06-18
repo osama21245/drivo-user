@@ -56,7 +56,10 @@ class _SettingScreenState extends State<SettingScreen> {
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
                   Row(children: [
-                    Image.asset(Images.languageSetting, scale: 2),
+                    Image.asset(Images.languageSetting,
+                        scale: 2,
+                        color:
+                            Theme.of(context).buttonTheme.colorScheme!.scrim),
                     const SizedBox(width: Dimensions.paddingSizeLarge),
                     Text('language'.tr,
                         style: textRegular.copyWith(
@@ -91,49 +94,51 @@ class _SettingScreenState extends State<SettingScreen> {
                   ),
                 ]),
           ),
-          const SizedBox(
-            height: Dimensions.paddingSize,
-          ),
-          Container(
-            decoration: BoxDecoration(
-                borderRadius: BorderRadius.circular(Dimensions.paddingSize),
-                border: Border.all(
-                    color: Theme.of(context).primaryColor, width: .5)),
-            child: Row(
-              children: [
-                Expanded(
-                    child: ListTile(
-                  title: Text('theme'.tr,
-                      style: textRegular.copyWith(
-                        color: Theme.of(context).textTheme.bodyLarge!.color,
-                      )),
-                  leading: Image.asset(Images.themeLogo, width: 20),
-                )),
-                GetBuilder<ThemeController>(builder: (themeController) {
-                  return Padding(
-                    padding: const EdgeInsets.only(right: 8.0),
-                    child: FlutterSwitch(
-                      value: themeController.darkTheme,
-                      onToggle: (value) {
-                        themeController.changeThemeSetting(value);
-                      },
-                      width: 60,
-                      height: 30,
-                      activeIcon: Image.asset(Images.darkThemeIcon,
-                          color: Theme.of(context).primaryColor),
-                      activeToggleColor:
-                          Theme.of(context).primaryColorDark.withOpacity(0.25),
-                      inactiveToggleColor: Theme.of(context).primaryColorDark,
-                      inactiveIcon: Image.asset(Images.lightThemeIcon),
-                      inactiveColor: Colors.grey.withOpacity(0.25),
-                      activeColor:
-                          Theme.of(context).primaryColorDark.withOpacity(0.25),
-                    ),
-                  );
-                })
-              ],
-            ),
-          ),
+          // const SizedBox(
+          //   height: Dimensions.paddingSize,
+          // ),
+          // Container(
+          //   decoration: BoxDecoration(
+          //       borderRadius: BorderRadius.circular(Dimensions.paddingSize),
+          //       border: Border.all(
+          //           color: Theme.of(context).primaryColor, width: .5)),
+          //   child: Row(
+          //     children: [
+          //       Expanded(
+          //           child: ListTile(
+          //         title: Text('theme'.tr,
+          //             style: textRegular.copyWith(
+          //               color: Theme.of(context).textTheme.bodyLarge!.color,
+          //             )),
+          //         leading: Image.asset(Images.themeLogo,
+          //             width: 20,
+          //             color: Theme.of(context).buttonTheme.colorScheme!.scrim),
+          //       )),
+          //       GetBuilder<ThemeController>(builder: (themeController) {
+          //         return Padding(
+          //           padding: const EdgeInsets.only(right: 8.0),
+          //           child: FlutterSwitch(
+          //             value: themeController.darkTheme,
+          //             onToggle: (value) {
+          //               themeController.changeThemeSetting(value);
+          //             },
+          //             width: 60,
+          //             height: 30,
+          //             activeIcon: Image.asset(Images.darkThemeIcon,
+          //                 color: Theme.of(context).primaryColor),
+          //             activeToggleColor:
+          //                 Theme.of(context).primaryColorDark.withOpacity(0.25),
+          //             inactiveToggleColor: Theme.of(context).primaryColorDark,
+          //             inactiveIcon: Image.asset(Images.lightThemeIcon),
+          //             inactiveColor: Colors.grey.withOpacity(0.25),
+          //             activeColor:
+          //                 Theme.of(context).primaryColorDark.withOpacity(0.25),
+          //           ),
+          //         );
+          //       })
+          //     ],
+          //   ),
+          // ),
           ListTile(
             onTap: () => Get.to(() => const ResetPasswordScreen(
                 fromChangePassword: true, phoneNumber: '')),

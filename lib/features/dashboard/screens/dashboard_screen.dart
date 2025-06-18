@@ -3,9 +3,11 @@ import 'package:get/get.dart';
 import 'package:ride_sharing_user_app/features/dashboard/controllers/bottom_menu_controller.dart';
 import 'package:ride_sharing_user_app/features/dashboard/domain/models/navigation_model.dart';
 import 'package:ride_sharing_user_app/features/home/screens/home_screen.dart';
+import 'package:ride_sharing_user_app/features/home/screens/trips_home_screen.dart';
+import 'package:ride_sharing_user_app/features/location/controllers/location_controller.dart';
 import 'package:ride_sharing_user_app/features/notification/screens/notification_screen.dart';
 import 'package:ride_sharing_user_app/features/profile/screens/profile_screen.dart';
-import 'package:ride_sharing_user_app/features/trip/screens/trip_screen.dart';
+import 'package:ride_sharing_user_app/features/trip/screens/tripe_screen.dart';
 import 'package:ride_sharing_user_app/util/dimensions.dart';
 import 'package:ride_sharing_user_app/util/images.dart';
 import 'package:ride_sharing_user_app/util/styles.dart';
@@ -34,10 +36,15 @@ class _DashboardScreenState extends State<DashboardScreen> {
         screen: const HomeScreen(),
       ),
       NavigationModel(
+          name: "Trips",
+          activeIcon: Images.carTripeIcon,
+          inactiveIcon: Images.carTripeIcon,
+          screen: TripsHomeScreen()),
+      NavigationModel(
         name: 'activity'.tr,
         activeIcon: Images.activityActive,
         inactiveIcon: Images.activityOutline,
-        screen: const TripScreen(fromProfile: false),
+        screen: const TripeScreen(fromProfile: false),
       ),
       NavigationModel(
         name: 'notification'.tr,
@@ -70,30 +77,46 @@ class _DashboardScreenState extends State<DashboardScreen> {
           body: Stack(children: [
             PageStorage(
                 bucket: bucket, child: item[menuController.currentTab].screen),
-            Positioned(
-                child: Align(
-              alignment: Alignment.bottomCenter,
-              child: Padding(
-                padding: const EdgeInsets.all(Dimensions.paddingSizeDefault),
-                child: Container(
-                  height: 65,
-                  decoration: BoxDecoration(
-                    borderRadius: BorderRadius.circular(20),
-                    color: Theme.of(context).primaryColor,
-                    boxShadow: [
-                      BoxShadow(
-                          offset: const Offset(0, 4),
-                          blurRadius: 3,
-                          color: Colors.black.withOpacity(0.3))
-                    ],
-                  ),
-                  child: Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                      children:
-                          generateBottomNavigationItems(menuController, item)),
-                ),
-              ),
-            )),
+            ValueListenableBuilder<bool>(
+              valueListenable:
+                  Get.find<LocationController>().bottomNavVisibility,
+              builder: (context, showBottomNav, child) {
+                // Only show the bottom navigation bar if:
+                // 1. locationController.bottomNavVisibility is true, OR
+                // 2. we're not on the home screen (currentTab != 0)
+                bool shouldShowBottomBar =
+                    showBottomNav || menuController.currentTab != 0;
+
+                return shouldShowBottomBar
+                    ? Positioned(
+                        child: Align(
+                        alignment: Alignment.bottomCenter,
+                        child: Padding(
+                          padding: const EdgeInsets.all(
+                              Dimensions.paddingSizeDefault),
+                          child: Container(
+                            height: 65,
+                            decoration: BoxDecoration(
+                              borderRadius: BorderRadius.circular(20),
+                              color: Theme.of(context).primaryColor,
+                              boxShadow: [
+                                BoxShadow(
+                                    offset: const Offset(0, 4),
+                                    blurRadius: 3,
+                                    color: Colors.black.withOpacity(0.3))
+                              ],
+                            ),
+                            child: Row(
+                                mainAxisAlignment:
+                                    MainAxisAlignment.spaceEvenly,
+                                children: generateBottomNavigationItems(
+                                    menuController, item)),
+                          ),
+                        ),
+                      ))
+                    : const SizedBox.shrink();
+              },
+            ),
           ]),
         );
       }),
@@ -150,6 +173,11 @@ class CustomMenuItem extends StatelessWidget {
               children: [
                 Image.asset(
                   isSelected ? activeIcon : inActiveIcon,
+                  color: activeIcon == Images.carTripeIcon
+                      ? Colors.white
+                      : !isSelected
+                          ? Colors.white.withOpacity(0.5)
+                          : null,
                   width: Dimensions.menuIconSize,
                   height: Dimensions.menuIconSize,
                 ),
@@ -167,3 +195,30 @@ class CustomMenuItem extends StatelessWidget {
     );
   }
 }
+
+final List<NavigationModel> item = [
+  NavigationModel(
+    name: 'home'.tr,
+    activeIcon: Images.navCarIcon,
+    inactiveIcon: Images.navCarIcon,
+    screen: const HomeScreen(),
+  ),
+  NavigationModel(
+    name: 'activity'.tr,
+    activeIcon: Images.navCalenderIcon,
+    inactiveIcon: Images.navCalenderIcon,
+    screen: const TripeScreen(fromProfile: false),
+  ),
+  NavigationModel(
+    name: 'notification'.tr,
+    activeIcon: Images.navNotificationIcon,
+    inactiveIcon: Images.navNotificationIcon,
+    screen: const NotificationScreen(),
+  ),
+  NavigationModel(
+    name: 'profile'.tr,
+    activeIcon: Images.navAddTripeIcon,
+    inactiveIcon: Images.navAddTripeIcon,
+    screen: const ProfileScreen(),
+  ),
+];

@@ -20,9 +20,13 @@ class AppBarWidget extends StatelessWidget implements PreferredSizeWidget {
   final Function()? onBackPressed;
   final bool centerTitle;
   final double? fontSize;
+  final FontWeight? fontWeight;
   final bool isHome;
   final String? subTitle;
   final bool showTripHistoryFilter;
+  final double? height;
+  final double? toolbarHeight;
+  final bool? isShowIcon;
   const AppBarWidget(
       {super.key,
       required this.title,
@@ -33,202 +37,231 @@ class AppBarWidget extends StatelessWidget implements PreferredSizeWidget {
       this.showActionButton = true,
       this.isHome = false,
       this.showTripHistoryFilter = false,
-      this.fontSize});
+      this.fontSize,
+      this.fontWeight,
+      this.height,
+      this.toolbarHeight,
+      this.isShowIcon});
 
   @override
   Widget build(BuildContext context) {
     return PreferredSize(
-      preferredSize: const Size.fromHeight(150.0),
+      preferredSize: Size.fromHeight(height ?? 150.0),
       child: AppBar(
-        elevation: 0,
-        scrolledUnderElevation: 0,
-        backgroundColor: Theme.of(context).scaffoldBackgroundColor,
-        toolbarHeight: 80,
-        automaticallyImplyLeading: false,
-        title: InkWell(
-          onTap: isHome
-              ? () {
-                  Address? address =
-                      Get.find<LocationController>().getUserAddress();
-                  if (address == null || address.longitude == null) {
-                    Get.to(() => const AccessLocationScreen());
-                  } else {
-                    Get.find<LocationController>().updatePosition(
-                      LatLng(address.latitude!, address.longitude!),
-                      false,
-                      LocationType.location,
-                    );
-                    Get.to(() => const PickMapScreen(
-                        type: LocationType.accessLocation,
-                        oldLocationExist: true));
-                  }
-                }
-              : null,
-          child: Padding(
-            padding:
-                const EdgeInsets.only(left: Dimensions.paddingSizeExtraSmall),
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.center,
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Row(children: [
-                  Text(
-                    title.tr,
-                    style: textRegular.copyWith(
-                      fontSize: fontSize ?? Dimensions.fontSizeLarge,
-                      color: Get.isDarkMode
-                          ? Colors.white.withOpacity(0.9)
-                          : Colors.white,
-                    ),
-                    maxLines: 1,
-                    textAlign: TextAlign.start,
-                    overflow: TextOverflow.ellipsis,
-                  ),
-                  if (showTripHistoryFilter)
-                    GetBuilder<TripController>(builder: (tripController) {
-                      return Expanded(
-                        child: Padding(
-                          padding: const EdgeInsets.symmetric(
-                              horizontal: Dimensions.paddingSizeDefault),
-                          child: DropDownWidget<int>(
-                            showText: false,
-                            showLeftSide: false,
-                            menuItemWidth: 120,
-                            icon: Container(
-                              height: 30,
-                              width: 30,
-                              decoration: BoxDecoration(
-                                  color: Theme.of(context).cardColor,
-                                  shape: BoxShape.circle),
-                              child: Icon(Icons.filter_list_sharp,
-                                  color: Theme.of(context).primaryColor,
-                                  size: 16),
-                            ),
-                            maxListHeight: 200,
-                            items: tripController.filterList
-                                .map((item) => CustomDropdownMenuItem<int>(
-                                      value: tripController.filterList
-                                          .indexOf(item),
-                                      child: Text(
-                                        item.tr,
-                                        style: textRegular.copyWith(
-                                          color: Get.isDarkMode
-                                              ? Get.find<TripController>()
-                                                          .filterIndex ==
-                                                      Get.find<TripController>()
-                                                          .filterList
-                                                          .indexOf(item)
-                                                  ? Theme.of(context)
-                                                      .primaryColor
-                                                  : Colors.white
-                                              : Get.find<TripController>()
-                                                          .filterIndex ==
-                                                      Get.find<TripController>()
-                                                          .filterList
-                                                          .indexOf(item)
-                                                  ? Theme.of(context)
-                                                      .primaryColor
-                                                  : Theme.of(context)
-                                                      .textTheme
-                                                      .bodyLarge!
-                                                      .color,
-                                        ),
-                                      ),
-                                    ))
-                                .toList(),
-                            hintText: tripController
-                                .filterList[
-                                    Get.find<TripController>().filterIndex]
-                                .tr,
-                            borderRadius: 5,
-                            onChanged: (int selectedItem) {
-                              if (selectedItem ==
-                                  tripController.filterList.length - 1) {
-                                showDialog(
-                                  context: context,
-                                  builder: (_) => CalenderWidget(
-                                      onChanged: (value) => Get.back()),
-                                );
-                              } else {
-                                tripController.setFilterTypeName(selectedItem);
-                              }
-                            },
-                          ),
-                        ),
-                      );
-                    }),
-                ]),
-                subTitle != null
-                    ? Text(
-                        '${'trip'.tr} #$subTitle',
-                        style: textRegular.copyWith(
-                          fontSize: fontSize ??
-                              (isHome
-                                  ? Dimensions.fontSizeLarge
-                                  : Dimensions.fontSizeLarge),
-                          color: Get.isDarkMode
-                              ? Colors.white.withOpacity(0.8)
-                              : Colors.white,
-                        ),
-                        maxLines: 1,
-                        textAlign: TextAlign.start,
-                        overflow: TextOverflow.ellipsis,
-                      )
-                    : const SizedBox(),
-                isHome
-                    ? GetBuilder<LocationController>(
-                        builder: (locationController) {
-                        return Padding(
-                          padding: const EdgeInsets.only(
-                              top: Dimensions.paddingSizeExtraSmall),
-                          child: Row(children: [
-                            Icon(Icons.place_outlined,
-                                color: Get.isDarkMode
-                                    ? Colors.white.withOpacity(0.8)
-                                    : Colors.white,
-                                size: 16),
-                            const SizedBox(width: Dimensions.paddingSizeSeven),
-                            Expanded(
-                                child: Text(
-                              locationController.getUserAddress()?.address ??
-                                  '',
-                              maxLines: 1,
-                              overflow: TextOverflow.ellipsis,
+          elevation: 0,
+          scrolledUnderElevation: 0,
+          backgroundColor: Theme.of(context).scaffoldBackgroundColor,
+          toolbarHeight: toolbarHeight ?? 20,
+          automaticallyImplyLeading: false,
+          title: isShowIcon == true
+              ? Padding(
+                  padding: const EdgeInsets.only(top: 16),
+                  child: InkWell(
+                    onTap: isHome
+                        ? () {
+                            Address? address =
+                                Get.find<LocationController>().getUserAddress();
+                            if (address == null || address.longitude == null) {
+                              Get.to(() => const AccessLocationScreen());
+                            } else {
+                              Get.find<LocationController>().updatePosition(
+                                LatLng(address.latitude!, address.longitude!),
+                                false,
+                                LocationType.location,
+                              );
+                              Get.to(() => const PickMapScreen(
+                                  type: LocationType.accessLocation,
+                                  oldLocationExist: true));
+                            }
+                          }
+                        : null,
+                    child: Padding(
+                      padding: const EdgeInsets.only(
+                          left: Dimensions.paddingSizeExtraSmall),
+                      child: Column(
+                        mainAxisAlignment: MainAxisAlignment.end,
+                        crossAxisAlignment: CrossAxisAlignment.end,
+                        children: [
+                          Row(children: [
+                            Text(
+                              title.tr,
                               style: textRegular.copyWith(
-                                  color: Get.isDarkMode
-                                      ? Colors.white.withOpacity(0.8)
-                                      : Colors.white,
-                                  fontSize: Dimensions.fontSizeExtraSmall),
-                            )),
+                                fontSize: fontSize ?? Dimensions.fontSizeLarge,
+                                fontWeight: fontWeight,
+                                color: Get.isDarkMode
+                                    ? Colors.white.withOpacity(0.9)
+                                    : Colors.white,
+                              ),
+                              maxLines: 1,
+                              textAlign: TextAlign.start,
+                              overflow: TextOverflow.ellipsis,
+                            ),
+                            if (showTripHistoryFilter)
+                              GetBuilder<TripController>(
+                                  builder: (tripController) {
+                                return Expanded(
+                                  child: Padding(
+                                    padding: const EdgeInsets.symmetric(
+                                        horizontal:
+                                            Dimensions.paddingSizeDefault),
+                                    child: DropDownWidget<int>(
+                                      showText: false,
+                                      showLeftSide: false,
+                                      menuItemWidth: 120,
+                                      icon: Container(
+                                        height: 30,
+                                        width: 30,
+                                        decoration: BoxDecoration(
+                                            color: Theme.of(context).cardColor,
+                                            shape: BoxShape.circle),
+                                        child: Icon(Icons.filter_list_sharp,
+                                            color:
+                                                Theme.of(context).primaryColor,
+                                            size: 16),
+                                      ),
+                                      maxListHeight: 200,
+                                      items: tripController.filterList
+                                          .map((item) =>
+                                              CustomDropdownMenuItem<int>(
+                                                value: tripController.filterList
+                                                    .indexOf(item),
+                                                child: Text(
+                                                  item.tr,
+                                                  style: textRegular.copyWith(
+                                                    color: Get.isDarkMode
+                                                        ? Get.find<TripController>()
+                                                                    .filterIndex ==
+                                                                Get.find<
+                                                                        TripController>()
+                                                                    .filterList
+                                                                    .indexOf(
+                                                                        item)
+                                                            ? Theme.of(context)
+                                                                .primaryColor
+                                                            : Colors.white
+                                                        : Get.find<TripController>()
+                                                                    .filterIndex ==
+                                                                Get.find<
+                                                                        TripController>()
+                                                                    .filterList
+                                                                    .indexOf(
+                                                                        item)
+                                                            ? Theme.of(context)
+                                                                .primaryColor
+                                                            : Theme.of(context)
+                                                                .textTheme
+                                                                .bodyLarge!
+                                                                .color,
+                                                  ),
+                                                ),
+                                              ))
+                                          .toList(),
+                                      hintText: tripController
+                                          .filterList[Get.find<TripController>()
+                                              .filterIndex]
+                                          .tr,
+                                      borderRadius: 5,
+                                      onChanged: (int selectedItem) {
+                                        if (selectedItem ==
+                                            tripController.filterList.length -
+                                                1) {
+                                          showDialog(
+                                            context: context,
+                                            builder: (_) => CalenderWidget(
+                                                onChanged: (value) =>
+                                                    Get.back()),
+                                          );
+                                        } else {
+                                          tripController
+                                              .setFilterTypeName(selectedItem);
+                                        }
+                                      },
+                                    ),
+                                  ),
+                                );
+                              }),
                           ]),
-                        );
-                      })
-                    : const SizedBox.shrink(),
-              ],
-            ),
+                          subTitle != null
+                              ? Text(
+                                  '${'trip'.tr} #$subTitle',
+                                  style: textRegular.copyWith(
+                                    fontSize: fontSize ??
+                                        (isHome
+                                            ? Dimensions.fontSizeLarge
+                                            : Dimensions.fontSizeLarge),
+                                    color: Get.isDarkMode
+                                        ? Colors.white.withOpacity(0.8)
+                                        : Colors.white,
+                                  ),
+                                  maxLines: 1,
+                                  textAlign: TextAlign.start,
+                                  overflow: TextOverflow.ellipsis,
+                                )
+                              : const SizedBox(),
+                          isHome
+                              ? GetBuilder<LocationController>(
+                                  builder: (locationController) {
+                                  return Padding(
+                                    padding: const EdgeInsets.only(
+                                        top: Dimensions.paddingSizeExtraSmall),
+                                    child: Row(children: [
+                                      Icon(Icons.place_outlined,
+                                          color: Get.isDarkMode
+                                              ? Colors.white.withOpacity(0.8)
+                                              : Colors.white,
+                                          size: 16),
+                                      const SizedBox(
+                                          width: Dimensions.paddingSizeSeven),
+                                      Expanded(
+                                          child: Text(
+                                        locationController
+                                                .getUserAddress()
+                                                ?.address ??
+                                            '',
+                                        maxLines: 1,
+                                        overflow: TextOverflow.ellipsis,
+                                        style: textRegular.copyWith(
+                                            color: Get.isDarkMode
+                                                ? Colors.white.withOpacity(0.8)
+                                                : Colors.white,
+                                            fontSize:
+                                                Dimensions.fontSizeExtraSmall),
+                                      )),
+                                    ]),
+                                  );
+                                })
+                              : const SizedBox.shrink(),
+                        ],
+                      ),
+                    ),
+                  ),
+                )
+              : SizedBox.shrink(),
+          centerTitle: centerTitle,
+          excludeHeaderSemantics: true,
+          titleSpacing: 0,
+          leading: showBackButton
+              ? Padding(
+                  padding: EdgeInsets.only(top: 10),
+                  child: IconButton(
+                    icon: const Icon(Icons.arrow_back_ios),
+                    color: Get.isDarkMode
+                        ? Colors.white.withOpacity(0.8)
+                        : Colors.white,
+                    onPressed: () => onBackPressed != null
+                        ? onBackPressed!()
+                        : Navigator.canPop(context)
+                            ? Get.back()
+                            : Get.offAll(() => const DashboardScreen()),
+                  ),
+                )
+              : SizedBox.shrink()
+          // Padding(
+          //         padding: const EdgeInsets.all(Dimensions.paddingSize),
+          //         child: Image.asset(Images.icon,
+          //             height: Get.height * 0.01, width: Get.width * 0.01),
+          //       ),
           ),
-        ),
-        centerTitle: centerTitle,
-        excludeHeaderSemantics: true,
-        titleSpacing: 0,
-        leading: showBackButton
-            ? IconButton(
-                icon: const Icon(Icons.arrow_back),
-                color: Get.isDarkMode
-                    ? Colors.white.withOpacity(0.8)
-                    : Colors.white,
-                onPressed: () => onBackPressed != null
-                    ? onBackPressed!()
-                    : Navigator.canPop(context)
-                        ? Get.back()
-                        : Get.offAll(() => const DashboardScreen()),
-              )
-            : Padding(
-                padding: const EdgeInsets.all(Dimensions.paddingSize),
-                child: Image.asset(Images.logoPng,
-                    height: Get.height * 0.01, width: Get.width * 0.01),
-              ),
-      ),
     );
   }
 
