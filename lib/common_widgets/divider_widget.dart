@@ -5,7 +5,12 @@ class CustomDivider extends StatelessWidget {
   final double dashWidth;
   final Color color;
   final Axis axis;
-  const CustomDivider({super.key, this.height = 1, this.dashWidth = 5, this.color = Colors.black, this.axis = Axis.horizontal});
+  const CustomDivider(
+      {super.key,
+      this.height = 1,
+      this.dashWidth = 5,
+      this.color = Colors.black,
+      this.axis = Axis.horizontal});
 
   @override
   Widget build(BuildContext context) {
@@ -22,7 +27,9 @@ class CustomDivider extends StatelessWidget {
               width: dashWidth,
               height: dashHeight,
               child: DecoratedBox(
-                decoration: BoxDecoration(color: color),
+                decoration: BoxDecoration(
+                    color:
+                        Theme.of(context).buttonTheme.colorScheme!.secondary),
               ),
             );
           }),

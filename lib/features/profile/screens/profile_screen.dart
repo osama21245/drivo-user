@@ -18,7 +18,7 @@ import 'package:ride_sharing_user_app/features/settings/screens/policy_screen.da
 import 'package:ride_sharing_user_app/features/settings/screens/setting_screen.dart';
 import 'package:ride_sharing_user_app/features/splash/controllers/config_controller.dart';
 import 'package:ride_sharing_user_app/features/support/screens/support_screen.dart';
-import 'package:ride_sharing_user_app/features/trip/screens/trip_screen.dart';
+import 'package:ride_sharing_user_app/features/trip/screens/tripe_screen.dart';
 import 'package:ride_sharing_user_app/features/wallet/screens/wallet_screen.dart';
 import 'package:ride_sharing_user_app/util/app_constants.dart';
 import 'package:ride_sharing_user_app/util/dimensions.dart';
@@ -44,9 +44,7 @@ class ProfileScreen extends StatelessWidget {
                   decoration: BoxDecoration(
                     borderRadius:
                         BorderRadius.circular(Dimensions.radiusExtraLarge),
-                    color: Get.isDarkMode
-                        ? Theme.of(context).scaffoldBackgroundColor
-                        : Theme.of(context).primaryColor.withOpacity(0.1),
+                    color: Theme.of(context).primaryColor,
                   ),
                   child: Column(
                       mainAxisAlignment: MainAxisAlignment.spaceEvenly,
@@ -89,11 +87,7 @@ class ProfileScreen extends StatelessWidget {
                                       style: textBold.copyWith(
                                           fontSize:
                                               Dimensions.fontSizeExtraLarge,
-                                          color: Theme.of(context)
-                                              .textTheme
-                                              .bodyMedium!
-                                              .color!
-                                              .withOpacity(0.9)),
+                                          color: Theme.of(context).cardColor),
                                       maxLines: 1,
                                       overflow: TextOverflow.ellipsis,
                                     ),
@@ -131,11 +125,7 @@ class ProfileScreen extends StatelessWidget {
                                     Text(
                                       '${"your_rating".tr} :'.tr,
                                       style: textBold.copyWith(
-                                        color: Theme.of(context)
-                                            .textTheme
-                                            .bodyMedium!
-                                            .color!
-                                            .withOpacity(0.8),
+                                        color: Theme.of(context).cardColor,
                                         fontSize: Dimensions.fontSizeSmall,
                                       ),
                                     ),
@@ -149,11 +139,7 @@ class ProfileScreen extends StatelessWidget {
                                       style: textBold.copyWith(
                                         fontSize: Dimensions.fontSizeSmall,
                                         letterSpacing: 3,
-                                        color: Theme.of(context)
-                                            .textTheme
-                                            .bodyMedium!
-                                            .color!
-                                            .withOpacity(0.8),
+                                        color: Theme.of(context).cardColor,
                                       ),
                                     ),
                                     const Icon(Icons.star,
@@ -191,7 +177,14 @@ class ProfileScreen extends StatelessWidget {
                             padding: const EdgeInsets.all(
                                 Dimensions.paddingSizeDefault),
                             child: SizedBox(
-                                width: 20, child: Image.asset(Images.editIcon)),
+                                width: 20,
+                                child: Image.asset(
+                                  Images.editIcon,
+                                  color: Theme.of(context)
+                                      .buttonTheme
+                                      .colorScheme!
+                                      .secondary,
+                                )),
                           ),
                         )))
               ]),
@@ -223,7 +216,7 @@ class ProfileScreen extends StatelessWidget {
               ProfileMenuItem(
                 title: 'my_trips',
                 icon: Images.profileMyTrip,
-                onTap: () => Get.to(() => const TripScreen(fromProfile: true)),
+                onTap: () => Get.to(() => const TripeScreen(fromProfile: true)),
               ),
               if ((Get.find<ConfigController>().config?.referralEarningStatus ??
                       false) ||
@@ -357,20 +350,14 @@ class ProfileScreen extends StatelessWidget {
     return Column(children: [
       Text(value,
           style: textBold.copyWith(
-            color: Get.isDarkMode
-                ? Theme.of(context).disabledColor
-                : Theme.of(context).primaryColor,
+            color: Theme.of(context).cardColor,
             fontSize: Dimensions.fontSizeExtraLarge,
           )),
       const SizedBox(height: Dimensions.paddingSizeExtraSmall),
       Text(title.tr,
           style: textMedium.copyWith(
               fontSize: Dimensions.fontSizeSmall,
-              color: Theme.of(context)
-                  .textTheme
-                  .bodyMedium!
-                  .color!
-                  .withOpacity(0.8))),
+              color: Theme.of(context).cardColor)),
     ]);
   }
 }

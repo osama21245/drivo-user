@@ -71,16 +71,18 @@ class _SignInScreenState extends State<SignInScreen> {
                   Get.isDarkMode
                       ? Images.logoWithNameWhite
                       : Images.logoWithNameBlack,
+                  color:
+                      Get.isDarkMode ? null : Theme.of(context).primaryColor!,
                   height: 75),
               const SizedBox(height: Dimensions.paddingSizeSmall),
               Row(mainAxisAlignment: MainAxisAlignment.center, children: [
-                Text(
-                  '${'welcome_to'.tr} ${AppConstants.appName}',
-                  style: textBold.copyWith(
-                      color: Theme.of(context).textTheme.bodyMedium!.color!,
-                      fontSize: Dimensions.fontSizeLarge),
-                ),
-                Image.asset(Images.hand, width: 40),
+                // Text(
+                //   '${'welcome_to'.tr} ${AppConstants.appName}',
+                //   style: textBold.copyWith(
+                //       color: Theme.of(context).textTheme.bodyMedium!.color!,
+                //       fontSize: Dimensions.fontSizeLarge),
+                // ),
+                // Image.asset(Images.hand, width: 40),
               ]),
             ]),
             SizedBox(height: MediaQuery.of(context).size.height * 0.06),

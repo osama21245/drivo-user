@@ -8,6 +8,7 @@ class AppConstants {
   static const String baseUrl =
       'https://drivoeg.com'; /* 'https://drivemond-admin.codemond.com'; */
   static const double appVersion = 2.1;
+  static const String mapKey = "AIzaSyCeF4BHLDezqD1pH7mlzxEchtX962QU9Os";
 
   /// Flutter SDK 3.24.0
   static const String fontFamily = 'SFProText';

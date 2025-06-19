@@ -53,7 +53,13 @@ class TripFareSummery extends StatelessWidget {
                     children: [
                       Row(children: [
                         Image.asset(Images.profileMyWallet,
-                            height: 15, width: 15),
+                            height: 15,
+                            width: 15,
+                            color: Theme.of(context)
+                                .buttonTheme
+                                .colorScheme!
+                                .scrim,
+                            colorBlendMode: BlendMode.modulate),
                         const SizedBox(width: Dimensions.paddingSizeSmall),
                         Text('fare_fee'.tr,
                             style: textRegular.copyWith(
@@ -90,6 +96,11 @@ class TripFareSummery extends StatelessWidget {
                               width: Dimensions.iconSizeSmall,
                               child: Image.asset(
                                 Images.farePrice,
+                                color: Theme.of(context)
+                                    .buttonTheme
+                                    .colorScheme!
+                                    .scrim,
+                                colorBlendMode: BlendMode.modulate,
                               )),
                           const SizedBox(width: Dimensions.paddingSizeSmall),
                           Expanded(
@@ -209,7 +220,13 @@ class TripFareSummery extends StatelessWidget {
                               Expanded(
                                   child: Row(children: [
                                 Image.asset(Images.profileMyWallet,
-                                    height: 15, width: 15),
+                                    height: 15,
+                                    width: 15,
+                                    color: Theme.of(context)
+                                        .buttonTheme
+                                        .colorScheme!
+                                        .scrim,
+                                    colorBlendMode: BlendMode.modulate),
                                 const SizedBox(
                                     width: Dimensions.paddingSizeSmall),
                                 Text('payment'.tr,

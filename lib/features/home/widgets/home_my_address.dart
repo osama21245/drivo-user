@@ -23,136 +23,137 @@ class _HomeMyAddressState extends State<HomeMyAddress> {
   @override
   Widget build(BuildContext context) {
     return GetBuilder<AddressController>(builder: (addressController) {
-      return Container(
-        padding: const EdgeInsets.all(Dimensions.paddingSize),
-        decoration: BoxDecoration(
-            color: (addressController.addressList != null &&
-                    addressController.addressList!.isNotEmpty)
-                ? Theme.of(context).primaryColor.withOpacity(0.2)
-                : null),
-        child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-          Text(
-            widget.title ?? 'my_address'.tr,
-            style: textSemiBold.copyWith(
-                fontSize: Dimensions.fontSizeDefault,
-                color: Get.isDarkMode
-                    ? Theme.of(context)
-                        .textTheme
-                        .bodyMedium!
-                        .color!
-                        .withOpacity(0.9)
+      return Padding(
+        padding:
+            const EdgeInsets.symmetric(vertical: Dimensions.paddingSizeDefault),
+        child: Container(
+            padding: const EdgeInsets.all(Dimensions.paddingSize),
+            decoration: BoxDecoration(
+                color: (addressController.addressList != null &&
+                        addressController.addressList!.isNotEmpty)
+                    ? Theme.of(context).primaryColor.withOpacity(0.1)
                     : null),
-          ),
-          if (addressController.addressList != null &&
-              addressController.addressList!.isNotEmpty)
-            Text('saved_address_for_your_trip'.tr,
-                style: textRegular.copyWith(
-                    fontSize: Dimensions.fontSizeSmall,
+            child:
+                Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+              Text(
+                widget.title ?? 'my_address'.tr,
+                style: textSemiBold.copyWith(
+                    fontSize: Dimensions.fontSizeDefault,
                     color: Get.isDarkMode
                         ? Theme.of(context)
                             .textTheme
                             .bodyMedium!
                             .color!
                             .withOpacity(0.9)
-                        : null)),
-          const SizedBox(height: Dimensions.paddingSizeSmall),
-          addressController.addressList != null
-              ? addressController.addressList!.isNotEmpty
-                  ? SizedBox(
-                      height: Get.width * 0.15,
-                      child: ListView.builder(
-                        itemCount: addressController.addressList?.length,
-                        padding: EdgeInsets.zero,
-                        scrollDirection: Axis.horizontal,
-                        itemBuilder: (context, index) {
-                          return AddressItemCard(
-                            address: addressController.addressList![index],
-                          );
-                        },
-                      ),
-                    )
-                  : InkWell(
-                      onTap: () =>
-                          Get.to(() => const AddNewAddress(address: null)),
-                      child: Container(
-                        decoration: BoxDecoration(
-                            borderRadius: BorderRadius.circular(
-                                Dimensions.paddingSizeSmall),
-                            color: Get.isDarkMode
-                                ? Theme.of(context)
-                                    .primaryColorDark
-                                    .withOpacity(.1)
-                                : Theme.of(context)
-                                    .colorScheme
-                                    .onSecondary
-                                    .withOpacity(.03),
-                            border: Border.all(
-                              color: Get.isDarkMode
-                                  ? Theme.of(context).canvasColor
-                                  : Theme.of(context)
-                                      .primaryColor
-                                      .withOpacity(.15),
-                            )),
-                        child: Row(children: [
-                          Padding(
-                            padding: const EdgeInsets.all(
-                                Dimensions.paddingSizeDefault),
-                            child: Container(
-                              width: Dimensions.buttonSize,
-                              height: Dimensions.buttonSize,
-                              decoration: BoxDecoration(
-                                color: Get.isDarkMode
-                                    ? Theme.of(context).primaryColorDark
-                                    : Theme.of(context)
-                                        .primaryColor
-                                        .withOpacity(.07),
+                        : null),
+              ),
+              if (addressController.addressList != null &&
+                  addressController.addressList!.isNotEmpty)
+                Text('saved_address_for_your_trip'.tr,
+                    style: textRegular.copyWith(
+                        fontSize: Dimensions.fontSizeSmall,
+                        color: Get.isDarkMode
+                            ? Theme.of(context)
+                                .textTheme
+                                .bodyMedium!
+                                .color!
+                                .withOpacity(0.9)
+                            : null)),
+              const SizedBox(height: Dimensions.paddingSizeSmall),
+              addressController.addressList != null
+                  ? addressController.addressList!.isNotEmpty
+                      ? SizedBox(
+                          height: Get.width * 0.15,
+                          child: ListView.builder(
+                            itemCount: addressController.addressList?.length,
+                            padding: EdgeInsets.zero,
+                            scrollDirection: Axis.horizontal,
+                            itemBuilder: (context, index) {
+                              return AddressItemCard(
+                                address: addressController.addressList![index],
+                              );
+                            },
+                          ),
+                        )
+                      : InkWell(
+                          onTap: () =>
+                              Get.to(() => const AddNewAddress(address: null)),
+                          child: Container(
+                            decoration: BoxDecoration(
                                 borderRadius: BorderRadius.circular(
-                                    Dimensions.paddingSizeExtraSmall),
-                              ),
-                              child: Center(
-                                  child: Icon(Icons.add,
-                                      color: Theme.of(context).primaryColor)),
-                            ),
-                          ),
-                          Expanded(
-                              child: Column(
-                                  crossAxisAlignment: CrossAxisAlignment.start,
-                                  children: [
-                                Text('add_address'.tr,
-                                    style: textRegular.copyWith(
-                                        fontSize: Dimensions.fontSizeLarge,
-                                        color: Get.isDarkMode
-                                            ? Theme.of(context)
-                                                .textTheme
-                                                .bodyMedium!
-                                                .color!
-                                                .withOpacity(0.9)
-                                            : null)),
-                                Text(
-                                  'save_your_address_for_quick_trip'.tr,
-                                  style: textRegular.copyWith(
-                                      fontSize: Dimensions.fontSizeSmall,
-                                      color: Get.isDarkMode
-                                          ? Theme.of(context)
-                                              .textTheme
-                                              .bodyMedium!
-                                              .color!
-                                              .withOpacity(0.8)
-                                          : null),
+                                    Dimensions.paddingSizeSmall),
+                                color: Theme.of(context)
+                                    .primaryColor
+                                    .withOpacity(.03),
+                                border: Border.all(
+                                  color: Get.isDarkMode
+                                      ? Theme.of(context).canvasColor
+                                      : Theme.of(context)
+                                          .primaryColor
+                                          .withOpacity(.30),
+                                )),
+                            child: Row(children: [
+                              Padding(
+                                padding: const EdgeInsets.all(
+                                    Dimensions.paddingSizeDefault),
+                                child: Container(
+                                  width: Dimensions.buttonSize,
+                                  height: Dimensions.buttonSize,
+                                  decoration: BoxDecoration(
+                                    color: Get.isDarkMode
+                                        ? Theme.of(context).primaryColorDark
+                                        : Theme.of(context)
+                                            .primaryColor
+                                            .withOpacity(.07),
+                                    borderRadius: BorderRadius.circular(
+                                        Dimensions.paddingSizeExtraSmall),
+                                  ),
+                                  child: Center(
+                                      child: Icon(Icons.add,
+                                          color:
+                                              Theme.of(context).primaryColor)),
                                 ),
-                              ])),
-                          Padding(
-                            padding: const EdgeInsets.all(
-                                Dimensions.paddingSizeSmall),
-                            child: SizedBox(
-                                width: 100,
-                                child: Image.asset(Images.addNewAddress)),
+                              ),
+                              Expanded(
+                                  child: Column(
+                                      crossAxisAlignment:
+                                          CrossAxisAlignment.start,
+                                      children: [
+                                    Text('add_address'.tr,
+                                        style: textRegular.copyWith(
+                                            fontSize: Dimensions.fontSizeLarge,
+                                            color: Get.isDarkMode
+                                                ? Theme.of(context)
+                                                    .textTheme
+                                                    .bodyMedium!
+                                                    .color!
+                                                    .withOpacity(0.9)
+                                                : null)),
+                                    Text(
+                                      'save_your_address_for_quick_trip'.tr,
+                                      style: textRegular.copyWith(
+                                          fontSize: Dimensions.fontSizeSmall,
+                                          color: Get.isDarkMode
+                                              ? Theme.of(context)
+                                                  .textTheme
+                                                  .bodyMedium!
+                                                  .color!
+                                                  .withOpacity(0.8)
+                                              : null),
+                                    ),
+                                  ])),
+                              Padding(
+                                  padding: const EdgeInsets.all(
+                                      Dimensions.paddingSizeSmall),
+                                  child: Image.asset(
+                                    Images.addNewAddress,
+                                    width: 100,
+                                  )),
+                            ]),
                           ),
-                        ]),
-                      ),
-                    )
-              : const AddressShimmer(),
-        ]),
+                        )
+                  : const AddressShimmer(),
+            ])),
       );
     });
   }

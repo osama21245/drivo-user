@@ -2,7 +2,7 @@
   "connection_to_api_server_failed": "Connection to api server failed due to internet connection",
   "on_boarding_1_title": "Searching\na car to go\nyour\ndestination? ",
   "on_boarding_2_title": "Select\nyour destination\nfrom map",
-  "on_boarding_3_title": "Your car is arrived\nbe ready for\nyour trip",
+  "on_boarding_3_title": "Your car has arrived\nbe ready for\nyour trip",
   "on_boarding_4_title": "Enjoy Your\nRide !\n& travel\nyour destination\neveryday",
   "yes": "Yes",
   "no": "No",
