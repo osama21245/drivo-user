@@ -5,8 +5,11 @@ import 'package:ride_sharing_user_app/features/dashboard/domain/models/navigatio
 import 'package:ride_sharing_user_app/features/home/screens/home_screen.dart';
 import 'package:ride_sharing_user_app/features/home/screens/trips_home_screen.dart';
 import 'package:ride_sharing_user_app/features/location/controllers/location_controller.dart';
+import 'package:ride_sharing_user_app/features/map/screens/map_screen.dart';
 import 'package:ride_sharing_user_app/features/notification/screens/notification_screen.dart';
+import 'package:ride_sharing_user_app/features/pool_stop_pickup/screens/welcome_pool_screen.dart';
 import 'package:ride_sharing_user_app/features/profile/screens/profile_screen.dart';
+import 'package:ride_sharing_user_app/features/trip/screens/trip_screen.dart';
 import 'package:ride_sharing_user_app/features/trip/screens/tripe_screen.dart';
 import 'package:ride_sharing_user_app/util/dimensions.dart';
 import 'package:ride_sharing_user_app/util/images.dart';
@@ -35,16 +38,19 @@ class _DashboardScreenState extends State<DashboardScreen> {
         inactiveIcon: Images.homeOutline,
         screen: const HomeScreen(),
       ),
-      NavigationModel(
-          name: "Trips",
-          activeIcon: Images.carTripeIcon,
-          inactiveIcon: Images.carTripeIcon,
-          screen: TripsHomeScreen()),
+      // NavigationModel(
+      //     name: "Trips",
+      //     activeIcon: Images.carTripeIcon,
+      //     inactiveIcon: Images.carTripeIcon,
+      //     screen: TripsHomeScreen()),
       NavigationModel(
         name: 'activity'.tr,
         activeIcon: Images.activityActive,
         inactiveIcon: Images.activityOutline,
-        screen: const TripeScreen(fromProfile: false),
+        screen:
+            // WelcomePoolScreen()
+
+            const TripScreen(fromProfile: false),
       ),
       NavigationModel(
         name: 'notification'.tr,
@@ -195,30 +201,3 @@ class CustomMenuItem extends StatelessWidget {
     );
   }
 }
-
-final List<NavigationModel> item = [
-  NavigationModel(
-    name: 'home'.tr,
-    activeIcon: Images.navCarIcon,
-    inactiveIcon: Images.navCarIcon,
-    screen: const HomeScreen(),
-  ),
-  NavigationModel(
-    name: 'activity'.tr,
-    activeIcon: Images.navCalenderIcon,
-    inactiveIcon: Images.navCalenderIcon,
-    screen: const TripeScreen(fromProfile: false),
-  ),
-  NavigationModel(
-    name: 'notification'.tr,
-    activeIcon: Images.navNotificationIcon,
-    inactiveIcon: Images.navNotificationIcon,
-    screen: const NotificationScreen(),
-  ),
-  NavigationModel(
-    name: 'profile'.tr,
-    activeIcon: Images.navAddTripeIcon,
-    inactiveIcon: Images.navAddTripeIcon,
-    screen: const ProfileScreen(),
-  ),
-];

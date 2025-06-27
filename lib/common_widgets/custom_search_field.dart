@@ -51,7 +51,7 @@ class _CustomSearchFieldState extends State<CustomSearchField> {
               filled: widget.fillColor,
               fillColor: Theme.of(context).cardColor,
               isDense: true,
-              contentPadding: EdgeInsets.symmetric(horizontal: 0, vertical: 0),
+              contentPadding: EdgeInsets.symmetric(horizontal: 0, vertical: 13),
               focusedBorder: const OutlineInputBorder(
                   borderSide: BorderSide(color: Colors.transparent, width: 0)),
               enabledBorder: const OutlineInputBorder(

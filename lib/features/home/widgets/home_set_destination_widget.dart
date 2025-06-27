@@ -6,6 +6,7 @@ import 'package:get/instance_manager.dart';
 import 'package:get/route_manager.dart';
 import 'package:ride_sharing_user_app/common_widgets/custom_search_field.dart';
 import 'package:ride_sharing_user_app/common_widgets/from_to_icon_widget.dart';
+import 'package:ride_sharing_user_app/features/home/controllers/search_tripe_controller.dart';
 import 'package:ride_sharing_user_app/features/home/widgets/home_date_picker_time.dart';
 import 'package:ride_sharing_user_app/features/location/controllers/location_controller.dart';
 import 'package:ride_sharing_user_app/features/location/view/pick_map_screen.dart';
@@ -14,6 +15,7 @@ import 'package:ride_sharing_user_app/features/map/screens/map_screen.dart';
 import 'package:ride_sharing_user_app/features/ride/controllers/ride_controller.dart';
 import 'package:ride_sharing_user_app/features/search_trips/screens/search_trips_screen.dart';
 import 'package:ride_sharing_user_app/features/splash/controllers/config_controller.dart';
+import 'package:ride_sharing_user_app/features/trip/screens/trip_screen.dart';
 import 'package:ride_sharing_user_app/features/trip/screens/tripe_screen.dart';
 import 'package:ride_sharing_user_app/helper/display_helper.dart';
 import 'package:ride_sharing_user_app/helper/route_helper.dart';
@@ -646,7 +648,15 @@ class _HomeSetDestinationWidgetState extends State<HomeSetDestinationWidget> {
                                                     isScrollControlled: true,
                                                     context: context,
                                                     builder: (context) =>
-                                                        HomeArabicDateTimePicker(),
+                                                        HomeArabicDateTimePicker(
+                                                      onDateTimeSelected:
+                                                          (dateTime) {
+                                                        // Get.find<
+                                                        //         SearchTripeController>()
+                                                        //     .setSelectedDateTime(
+                                                        //         dateTime);
+                                                      },
+                                                    ),
                                                   );
                                                 })),
                                         const SizedBox(
@@ -1145,7 +1155,7 @@ class _HomeSetDestinationWidgetState extends State<HomeSetDestinationWidget> {
                                       onTap: () {
                                         Navigator.of(context).push(
                                             MaterialPageRoute(
-                                                builder: (_) => TripeScreen(
+                                                builder: (_) => TripScreen(
                                                     fromProfile: false)));
 // <<<<<<< Updated upstream
 //                                                     SearchTripsScreen()));

@@ -119,6 +119,12 @@ class AppConstants {
       '/api/customer/auth/firebase-otp-verification';
   static const String checkRegisteredUserUri = '/api/customer/auth/check';
 
+  // New trip-related endpoints
+  static const String userSearchTripe = '/api/passenger/find-match';
+  static const String addDriverTripe = '/api/driver/register-route';
+  static const String allSearchTripe = '/api/passenger/find-match';
+  static const String joinTripe = '/api/passenger/join';
+
   /// Shared Key
   static const String notification = 'notification';
   static const String theme = 'theme';
@@ -140,6 +146,12 @@ class AppConstants {
   static const String externalUserPhone = 'external_user_phone';
   static const String externalUserPassword = 'external_user_password';
   static const String externalUserCountryCode = 'external_user_countryCode';
+
+  // New car-related endpoints
+  static const String carBrandList = '/api/driver/vehicle/brand/list?offset=';
+  static const String carMainCategory =
+      '/api/driver/vehicle/category/list?offset=';
+  static const String addNewCar = '/api/driver/vehicle/store';
 
   /// Status
   static const String pending = 'pending';

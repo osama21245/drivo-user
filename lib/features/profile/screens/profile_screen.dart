@@ -18,6 +18,7 @@ import 'package:ride_sharing_user_app/features/settings/screens/policy_screen.da
 import 'package:ride_sharing_user_app/features/settings/screens/setting_screen.dart';
 import 'package:ride_sharing_user_app/features/splash/controllers/config_controller.dart';
 import 'package:ride_sharing_user_app/features/support/screens/support_screen.dart';
+import 'package:ride_sharing_user_app/features/trip/screens/trip_screen.dart';
 import 'package:ride_sharing_user_app/features/trip/screens/tripe_screen.dart';
 import 'package:ride_sharing_user_app/features/wallet/screens/wallet_screen.dart';
 import 'package:ride_sharing_user_app/util/app_constants.dart';
@@ -216,7 +217,7 @@ class ProfileScreen extends StatelessWidget {
               ProfileMenuItem(
                 title: 'my_trips',
                 icon: Images.profileMyTrip,
-                onTap: () => Get.to(() => const TripeScreen(fromProfile: true)),
+                onTap: () => Get.to(() => const TripScreen(fromProfile: true)),
               ),
               if ((Get.find<ConfigController>().config?.referralEarningStatus ??
                       false) ||

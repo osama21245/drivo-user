@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
 import 'package:get/get_utils/src/extensions/export.dart';
 import 'package:ride_sharing_user_app/common_widgets/button_widget.dart';
 import 'package:ride_sharing_user_app/util/dimensions.dart';
@@ -6,7 +7,9 @@ import 'package:ride_sharing_user_app/util/images.dart';
 import 'package:ride_sharing_user_app/util/styles.dart';
 
 class HomeArabicDateTimePicker extends StatefulWidget {
-  const HomeArabicDateTimePicker({Key? key}) : super(key: key);
+  final Function(DateTime) onDateTimeSelected;
+  const HomeArabicDateTimePicker({Key? key, required this.onDateTimeSelected})
+      : super(key: key);
 
   @override
   _HomeArabicDateTimePickerState createState() =>
@@ -23,6 +26,7 @@ class _HomeArabicDateTimePickerState extends State<HomeArabicDateTimePicker> {
   void initState() {
     super.initState();
     final now = DateTime.now();
+    selectedDate = DateTime(now.year, now.month, now.day);
     selectedHour =
         now.hour > 12 ? now.hour - 12 : (now.hour == 0 ? 12 : now.hour);
     selectedMinute = now.minute;
@@ -382,123 +386,160 @@ class _HomeArabicDateTimePickerState extends State<HomeArabicDateTimePicker> {
     );
   }
 
+  DateTime _createDateTime() {
+    try {
+      return DateTime(
+        selectedDate.year,
+        selectedDate.month,
+        selectedDate.day,
+        isAM ? selectedHour : selectedHour + 12,
+        selectedMinute,
+      );
+    } catch (e) {
+      print('Error creating DateTime: $e');
+      return DateTime.now();
+    }
+  }
+
   void _showTimePicker() {
     showModalBottomSheet(
       context: context,
       builder: (BuildContext context) {
-        return Container(
-          height: 300,
-          child: Column(
-            children: [
-              Container(
-                padding: EdgeInsets.all(16),
-                child: Text(
-                  'choose_time'.tr,
-                  style: TextStyle(
-                    fontSize: 18,
-                    fontWeight: FontWeight.w600,
+        return StatefulBuilder(
+          builder: (BuildContext context, StateSetter setModalState) {
+            return Container(
+              height: 300,
+              child: Column(
+                children: [
+                  Container(
+                    padding: EdgeInsets.all(16),
+                    child: Text(
+                      'choose_time'.tr,
+                      style: TextStyle(
+                        fontSize: 18,
+                        fontWeight: FontWeight.w600,
+                      ),
+                    ),
                   ),
-                ),
-              ),
-              Expanded(
-                child: Row(
-                  children: [
-                    // Hour selector
-                    Expanded(
-                      child: Column(
-                        children: [
-                          Text('hour'.tr,
-                              style: TextStyle(
-                                  fontSize: 16, fontWeight: FontWeight.w500)),
-                          Expanded(
-                            child: ListWheelScrollView.useDelegate(
-                              itemExtent: 50,
-                              onSelectedItemChanged: (index) {
-                                setState(() {
-                                  selectedHour = index + 1;
-                                });
-                              },
-                              childDelegate: ListWheelChildBuilderDelegate(
-                                childCount: 12,
-                                builder: (context, index) {
-                                  final hour = index + 1;
-                                  final isSelected = hour == selectedHour;
-                                  return Container(
-                                    alignment: Alignment.center,
-                                    child: Text(
-                                      hour.toString().padLeft(2, '0'),
-                                      style: TextStyle(
-                                        fontSize: isSelected ? 24 : 16,
-                                        fontWeight: isSelected
-                                            ? FontWeight.bold
-                                            : FontWeight.normal,
-                                        color: isSelected
-                                            ? Theme.of(context).primaryColor
-                                            : Colors.black54,
-                                      ),
-                                    ),
-                                  );
-                                },
+                  Expanded(
+                    child: Row(
+                      children: [
+                        // Hour selector
+                        Expanded(
+                          child: Column(
+                            children: [
+                              Text('hour'.tr,
+                                  style: TextStyle(
+                                      fontSize: 16,
+                                      fontWeight: FontWeight.w500)),
+                              Expanded(
+                                child: ListWheelScrollView.useDelegate(
+                                  itemExtent: 50,
+                                  onSelectedItemChanged: (index) {
+                                    setModalState(() {
+                                      selectedHour = index + 1;
+                                    });
+                                  },
+                                  childDelegate: ListWheelChildBuilderDelegate(
+                                    childCount: 12,
+                                    builder: (context, index) {
+                                      final hour = index + 1;
+                                      final isSelected = hour == selectedHour;
+                                      return Container(
+                                        alignment: Alignment.center,
+                                        child: Text(
+                                          hour.toString().padLeft(2, '0'),
+                                          style: TextStyle(
+                                            fontSize: isSelected ? 24 : 16,
+                                            fontWeight: isSelected
+                                                ? FontWeight.bold
+                                                : FontWeight.normal,
+                                            color: isSelected
+                                                ? Theme.of(context).primaryColor
+                                                : Colors.black54,
+                                          ),
+                                        ),
+                                      );
+                                    },
+                                  ),
+                                ),
                               ),
-                            ),
+                            ],
                           ),
-                        ],
-                      ),
-                    ),
-                    // Minute selector
-                    Expanded(
-                      child: Column(
-                        children: [
-                          Text('minute'.tr,
-                              style: TextStyle(
-                                  fontSize: 16, fontWeight: FontWeight.w500)),
-                          Expanded(
-                            child: ListWheelScrollView.useDelegate(
-                              itemExtent: 50,
-                              onSelectedItemChanged: (index) {
-                                setState(() {
-                                  selectedMinute = index;
-                                });
-                              },
-                              childDelegate: ListWheelChildBuilderDelegate(
-                                childCount: 60,
-                                builder: (context, index) {
-                                  final isSelected = index == selectedMinute;
-                                  return Container(
-                                    alignment: Alignment.center,
-                                    child: Text(
-                                      index.toString().padLeft(2, '0'),
-                                      style: TextStyle(
-                                        fontSize: isSelected ? 24 : 16,
-                                        fontWeight: isSelected
-                                            ? FontWeight.bold
-                                            : FontWeight.normal,
-                                        color: isSelected
-                                            ? Theme.of(context).primaryColor
-                                            : Colors.black54,
-                                      ),
-                                    ),
-                                  );
-                                },
+                        ),
+                        // Minute selector
+                        Expanded(
+                          child: Column(
+                            children: [
+                              Text('minute'.tr,
+                                  style: TextStyle(
+                                      fontSize: 16,
+                                      fontWeight: FontWeight.w500)),
+                              Expanded(
+                                child: ListWheelScrollView.useDelegate(
+                                  itemExtent: 50,
+                                  onSelectedItemChanged: (index) {
+                                    setModalState(() {
+                                      selectedMinute = index;
+                                    });
+                                  },
+                                  childDelegate: ListWheelChildBuilderDelegate(
+                                    childCount: 60,
+                                    builder: (context, index) {
+                                      final isSelected =
+                                          index == selectedMinute;
+                                      return Container(
+                                        alignment: Alignment.center,
+                                        child: Text(
+                                          index.toString().padLeft(2, '0'),
+                                          style: TextStyle(
+                                            fontSize: isSelected ? 24 : 16,
+                                            fontWeight: isSelected
+                                                ? FontWeight.bold
+                                                : FontWeight.normal,
+                                            color: isSelected
+                                                ? Theme.of(context).primaryColor
+                                                : Colors.black54,
+                                          ),
+                                        ),
+                                      );
+                                    },
+                                  ),
+                                ),
                               ),
-                            ),
+                            ],
                           ),
-                        ],
-                      ),
+                        ),
+                      ],
                     ),
-                  ],
-                ),
+                  ),
+                  Container(
+                    padding: EdgeInsets.all(16),
+                    child: ButtonWidget(
+                      backgroundColor: Theme.of(context).primaryColor,
+                      onPressed: () {
+                        final selectedDateTime = _createDateTime();
+                        final now = DateTime.now();
+
+                        if (selectedDateTime.isBefore(now)) {
+                          Get.snackbar(
+                            'Error',
+                            'Please select a future time',
+                            snackPosition: SnackPosition.BOTTOM,
+                          );
+                          return;
+                        }
+
+                        setState(() {});
+                        Navigator.pop(context);
+                      },
+                      buttonText: 'choose'.tr,
+                    ),
+                  ),
+                ],
               ),
-              Container(
-                padding: EdgeInsets.all(16),
-                child: ButtonWidget(
-                  backgroundColor: Theme.of(context).primaryColor,
-                  onPressed: () {},
-                  buttonText: 'choose'.tr,
-                ),
-              ),
-            ],
-          ),
+            );
+          },
         );
       },
     );
@@ -512,7 +553,20 @@ class _HomeArabicDateTimePickerState extends State<HomeArabicDateTimePicker> {
         buttonText: 'choose_date'.tr,
         radius: 10,
         onPressed: () {
-          _showTimePicker();
+          final selectedDateTime = _createDateTime();
+          final now = DateTime.now();
+
+          if (selectedDateTime.isBefore(now)) {
+            Get.snackbar(
+              'Error',
+              'Please select a future time',
+              snackPosition: SnackPosition.BOTTOM,
+            );
+            return;
+          }
+
+          widget.onDateTimeSelected(selectedDateTime);
+          Navigator.pop(context);
         },
       ),
     );

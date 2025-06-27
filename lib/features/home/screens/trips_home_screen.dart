@@ -6,6 +6,7 @@ import 'package:ride_sharing_user_app/features/home/widgets/banner_view.dart';
 import 'package:ride_sharing_user_app/features/home/widgets/best_offers_widget.dart';
 import 'package:ride_sharing_user_app/features/home/widgets/category_view.dart';
 import 'package:ride_sharing_user_app/features/home/widgets/coupon_home_widget.dart';
+import 'package:ride_sharing_user_app/features/home/widgets/home_location_widget.dart';
 import 'package:ride_sharing_user_app/features/home/widgets/home_map_view.dart';
 import 'package:ride_sharing_user_app/features/home/widgets/home_recent_trips_widget.dart';
 import 'package:ride_sharing_user_app/features/home/widgets/home_search_widget.dart';
@@ -108,7 +109,6 @@ class _TripsHomeScreenState extends State<TripsHomeScreen> {
   @override
   Widget build(BuildContext context) {
     ConfigModel? config = Get.find<ConfigController>().config;
-
     return Scaffold(
       body: GetBuilder<RideController>(builder: (rideController) {
         return GetBuilder<ParcelController>(builder: (parcelController) {
@@ -163,7 +163,7 @@ class _TripsHomeScreenState extends State<TripsHomeScreen> {
                               //       top: Dimensions.paddingSize),
                               //   child: CategoryView(),
                               // ),
-                              HomeSetDestinationWidget(),
+                              HomeLocationWidget(),
                               if ((config?.externalSystem ?? false) &&
                                   Get.find<AuthController>().isLoggedIn()) ...[
                                 const VisitToMartWidget(),
