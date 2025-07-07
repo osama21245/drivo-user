@@ -6,6 +6,7 @@ import 'package:ride_sharing_user_app/features/parcel/controllers/parcel_control
 import 'package:ride_sharing_user_app/features/payment/screens/payment_screen.dart';
 import 'package:ride_sharing_user_app/features/ride/controllers/ride_controller.dart';
 import 'package:ride_sharing_user_app/features/ride/domain/models/trip_details_model.dart';
+import 'package:ride_sharing_user_app/features/trip/screens/trip_details_screen.dart';
 import 'package:ride_sharing_user_app/features/trip/screens/tripe_details_screen.dart';
 import 'package:ride_sharing_user_app/helper/date_converter.dart';
 import 'package:ride_sharing_user_app/helper/price_converter.dart';
@@ -77,7 +78,7 @@ class TripItemView extends StatelessWidget {
                   fromParcel: tripDetails.type == 'parcel' ? true : false));
             });
           } else {
-            Get.to(() => TripeDetailsScreen(tripId: tripDetails.id!));
+            Get.to(() => TripDetailsScreen(tripId: tripDetails.id!));
           }
         }
       },

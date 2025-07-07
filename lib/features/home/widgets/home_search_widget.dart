@@ -11,74 +11,90 @@ class HomeSearchWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-        decoration: BoxDecoration(
-          color: Theme.of(context).cardColor,
-          borderRadius: BorderRadius.circular(20),
-          boxShadow: [
-            BoxShadow(
-              color: Colors.black.withOpacity(0.05),
-              blurRadius: 8,
-              offset: const Offset(0, 2),
-            ),
-          ],
-        ),
-        child: GestureDetector(
-          onTap: () => Get.to(() => const SetDestinationScreen()),
-          child: Padding(
-            padding: const EdgeInsets.only(
-              left: 14,
-              right: 14,
-              top: 37,
-              bottom: 20,
-            ),
-            child: Container(
-              height: 60,
-              width: double.infinity,
-              padding: const EdgeInsets.symmetric(
-                horizontal: Dimensions.paddingSizeDefault,
-                vertical: Dimensions.paddingSizeSmall,
-              ),
-              decoration: BoxDecoration(
-                color: Theme.of(context)
-                    .buttonTheme
-                    .colorScheme
-                    ?.secondaryFixedDim, // Light grey color
-                borderRadius: BorderRadius.circular(15),
-              ),
-              child: Row(
-                children: [
-                  // Search icon
-                  IconButton(
-                      color: Theme.of(context).hintColor,
-                      onPressed: () =>
-                          Get.to(() => const SetDestinationScreen()),
-                      icon: Icon(Icons.search, color: Colors.black, size: 25)),
-                  const SizedBox(width: 8),
+    return SizedBox(
+      height: Dimensions.searchBarSize,
+      child: TextField(
+        style: textRegular.copyWith(
+            color: Theme.of(context)
+                .textTheme
+                .bodyMedium!
+                .color!
+                .withOpacity(0.8)),
+        cursorColor: Theme.of(context).hintColor,
+        autofocus: false,
+        readOnly: true,
+        textAlignVertical: TextAlignVertical.center,
+        textInputAction: TextInputAction.search,
+        decoration: InputDecoration(
+          // InputBorder? errorBorder,
+          // InputBorder? focusedErrorBorder,
+          // InputBorder? enabledBorder,
 
-                  // Hint text
-                  Expanded(
-                    child: Text(
-                      'where_to_go'.tr,
-                      style: textRegular.copyWith(
-                        fontSize: 23,
-                        fontWeight: FontWeight.bold,
-                      ),
-                    ),
-                  ),
-
-                  // Voice search icon (if you want to add it back)
-                  // IconButton(
-                  //   color: Theme.of(context).hintColor,
-                  //   onPressed: () {
-                  //     Get.dialog(const VoiceSearchDialog(), barrierDismissible: false);
-                  //   },
-                  //   icon: Icon(Icons.mic, color: Colors.black, size: 25),
-                  // ),
-                ],
-              ),
+          contentPadding: const EdgeInsets.symmetric(
+            horizontal: Dimensions.paddingSizeDefault,
+            vertical: Dimensions.paddingSizeExtraSmall,
+          ),
+          border: OutlineInputBorder(
+            borderRadius: BorderRadius.circular(20),
+            borderSide: BorderSide(
+                color: Theme.of(context).primaryColor.withOpacity(0.2)),
+          ),
+          enabledBorder: OutlineInputBorder(
+            borderRadius: BorderRadius.circular(20),
+            borderSide: BorderSide(
+                color: Theme.of(context).primaryColor.withOpacity(0.2)),
+          ),
+          errorBorder: OutlineInputBorder(
+            borderRadius: BorderRadius.circular(20),
+            borderSide: BorderSide(
+                color: Theme.of(context).primaryColor.withOpacity(0.2)),
+          ),
+          focusedErrorBorder: OutlineInputBorder(
+            borderRadius: BorderRadius.circular(20),
+            borderSide: BorderSide(
+                color: Theme.of(context).primaryColor.withOpacity(0.2)),
+          ),
+          focusedBorder: OutlineInputBorder(
+            borderRadius: BorderRadius.circular(20),
+            borderSide: BorderSide(
+                color: Theme.of(context).primaryColor.withOpacity(0.2)),
+          ),
+          disabledBorder: OutlineInputBorder(
+            borderRadius: BorderRadius.circular(20),
+            borderSide: BorderSide(
+                color: Theme.of(context).primaryColor.withOpacity(0.2)),
+          ),
+          isDense: true,
+          hintText: 'where_to_go'.tr,
+          hintStyle: textRegular.copyWith(
+            color:
+                Theme.of(context).textTheme.bodyMedium!.color!.withOpacity(0.5),
+          ),
+          suffixIcon: IconButton(
+            color: Theme.of(context).hintColor,
+            onPressed: () {
+              Get.dialog(const VoiceSearchDialog(), barrierDismissible: false);
+            },
+            icon: Image.asset(
+              Images.microPhoneIcon,
+              color: Get.isDarkMode ? Theme.of(context).hintColor : null,
+              height: 20,
+              width: 20,
             ),
           ),
-        ));
+          prefixIcon: IconButton(
+            color: Theme.of(context).hintColor,
+            onPressed: () => Get.to(() => const SetDestinationScreen()),
+            icon: Image.asset(
+              Images.homeSearchIcon,
+              color: Get.isDarkMode ? Theme.of(context).hintColor : null,
+              height: 20,
+              width: 20,
+            ),
+          ),
+        ),
+        onTap: () => Get.to(() => const SetDestinationScreen()),
+      ),
+    );
   }
 }

@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:ride_sharing_user_app/features/payment/screens/payment_screen.dart';
 import 'package:ride_sharing_user_app/features/ride/domain/models/trip_details_model.dart';
+import 'package:ride_sharing_user_app/features/trip/screens/trip_details_screen.dart';
 import 'package:ride_sharing_user_app/features/trip/screens/tripe_details_screen.dart';
 import 'package:ride_sharing_user_app/helper/date_converter.dart';
 import 'package:ride_sharing_user_app/helper/price_converter.dart';
@@ -42,7 +43,7 @@ class ParcelItem extends StatelessWidget {
             } else if (rideRequest.currentStatus == "returning" &&
                 rideRequest.type == 'parcel') {
               rideController.getRideDetails(rideRequest.id!).then((value) {
-                Get.to(() => TripeDetailsScreen(
+                Get.to(() => TripDetailsScreen(
                     tripId: rideRequest.id!, fromNotification: true));
               });
             } else {

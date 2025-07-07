@@ -5,6 +5,7 @@ import 'package:ride_sharing_user_app/features/notification/domain/models/notifi
 import 'package:ride_sharing_user_app/features/refer_and_earn/controllers/refer_and_earn_controller.dart';
 import 'package:ride_sharing_user_app/features/refer_and_earn/screens/refer_and_earn_screen.dart';
 import 'package:ride_sharing_user_app/features/splash/controllers/config_controller.dart';
+import 'package:ride_sharing_user_app/features/trip/screens/trip_details_screen.dart';
 import 'package:ride_sharing_user_app/features/trip/screens/tripe_details_screen.dart';
 import 'package:ride_sharing_user_app/features/wallet/screens/wallet_screen.dart';
 import 'package:ride_sharing_user_app/helper/date_converter.dart';
@@ -107,7 +108,7 @@ class NotificationCard extends StatelessWidget {
                     } else if (notification.action ==
                             'parcel_refund_request_approved' ||
                         notification.action == 'parcel_refund_request_denied') {
-                      Get.to(() => TripeDetailsScreen(
+                      Get.to(() => TripDetailsScreen(
                           tripId: notification.rideRequestId ?? ''));
                     } else if (notification.action == 'refunded_as_coupon') {
                       Get.to(() => MyOfferScreen(isCoupon: true));

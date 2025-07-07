@@ -21,6 +21,7 @@ import 'package:ride_sharing_user_app/features/refer_and_earn/screens/refer_and_
 import 'package:ride_sharing_user_app/features/ride/widgets/confirmation_trip_dialog.dart';
 import 'package:ride_sharing_user_app/features/settings/domain/html_enum_types.dart';
 import 'package:ride_sharing_user_app/features/settings/screens/policy_screen.dart';
+import 'package:ride_sharing_user_app/features/trip/screens/trip_details_screen.dart';
 import 'package:ride_sharing_user_app/features/trip/screens/tripe_details_screen.dart';
 import 'package:ride_sharing_user_app/features/wallet/screens/wallet_screen.dart';
 import 'package:ride_sharing_user_app/helper/display_helper.dart';
@@ -551,13 +552,13 @@ class NotificationHelper {
       Get.find<ReferAndEarnController>().updateCurrentTabIndex(1);
       _toRoute(formSplash, const ReferAndEarnScreen());
     } else if (data['action'] == 'parcel_returned') {
-      _toRoute(formSplash, TripeDetailsScreen(tripId: data['ride_request_id']));
+      _toRoute(formSplash, TripDetailsScreen(tripId: data['ride_request_id']));
     } else if (data['action'] == 'someone_used_your_code') {
       _toRoute(formSplash, const ReferAndEarnScreen());
     } else if (data['action'] == 'parcel_refund_request_approved') {
-      _toRoute(formSplash, TripeDetailsScreen(tripId: data['ride_request_id']));
+      _toRoute(formSplash, TripDetailsScreen(tripId: data['ride_request_id']));
     } else if (data['action'] == 'parcel_refund_request_denied') {
-      _toRoute(formSplash, TripeDetailsScreen(tripId: data['ride_request_id']));
+      _toRoute(formSplash, TripDetailsScreen(tripId: data['ride_request_id']));
     } else if (data['action'] == 'refunded_to_wallet') {
       _toRoute(formSplash, const WalletScreen());
     } else if (data['action'] == 'refunded_as_coupon') {
@@ -569,7 +570,7 @@ class NotificationHelper {
     } else if (data['action'] == 'fund_added') {
       _toRoute(formSplash, const WalletScreen());
     } else if (data['action'] == 'review_submit') {
-      _toRoute(formSplash, TripeDetailsScreen(tripId: data['ride_request_id']));
+      _toRoute(formSplash, TripDetailsScreen(tripId: data['ride_request_id']));
     } else if (data['action'] == 'withdraw_rejected') {
       _toRoute(formSplash, const WalletScreen());
     } else if (data['action'] == 'withdraw_reversed') {
@@ -641,7 +642,7 @@ class NotificationHelper {
                 {
                   _toRoute(
                       formSplash,
-                      TripeDetailsScreen(
+                      TripDetailsScreen(
                           tripId: tripId, fromNotification: true)),
                 }
             }

@@ -1,4 +1,4 @@
- import 'dart:io';
+import 'dart:io';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/gestures.dart';
@@ -17,11 +17,11 @@ import 'package:ride_sharing_user_app/theme/light_theme.dart';
 import 'package:ride_sharing_user_app/theme/theme_controller.dart';
 import 'package:ride_sharing_user_app/util/app_constants.dart';
 
-
-final FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin = FlutterLocalNotificationsPlugin();
+final FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin =
+    FlutterLocalNotificationsPlugin();
 
 Future<void> main() async {
-  if(ResponsiveHelper.isMobilePhone) {
+  if (Platform.isAndroid && ResponsiveHelper.isMobilePhone) {
     HttpOverrides.global = MyHttpOverrides();
   }
   WidgetsFlutterBinding.ensureInitialized();
@@ -37,47 +37,50 @@ Future<void> main() async {
   //   return true;
   // };
 
-
   Map<String, Map<String, String>> languages = await di.init();
-  final RemoteMessage? remoteMessage = await FirebaseMessaging.instance.getInitialMessage();
+  final RemoteMessage? remoteMessage =
+      await FirebaseMessaging.instance.getInitialMessage();
 
   await NotificationHelper.initialize(flutterLocalNotificationsPlugin);
   await FirebaseMessaging.instance.requestPermission();
   FirebaseMessaging.onBackgroundMessage(myBackgroundMessageHandler);
   await SystemChrome.setPreferredOrientations([DeviceOrientation.portraitUp]);
 
-
   runApp(MyApp(languages: languages, notificationData: remoteMessage?.data));
 }
 
 class MyApp extends StatelessWidget {
   final Map<String, Map<String, String>> languages;
-  final Map<String,dynamic>? notificationData;
+  final Map<String, dynamic>? notificationData;
   const MyApp({super.key, required this.languages, this.notificationData});
-
 
   @override
   Widget build(BuildContext context) {
     return GetBuilder<ThemeController>(builder: (themeController) {
       return GetBuilder<LocalizationController>(builder: (localizeController) {
         return GetMaterialApp(
-          title: AppConstants.appName,
-          debugShowCheckedModeBanner: false,
-          navigatorKey: Get.key,
-          scrollBehavior: const MaterialScrollBehavior().copyWith(
-            dragDevices: {PointerDeviceKind.mouse, PointerDeviceKind.touch},),
-          theme: themeController.darkTheme ? darkTheme : lightTheme,
-          locale: localizeController.locale,
-          initialRoute: RouteHelper.getSplashRoute(notificationData: notificationData),
-          getPages: RouteHelper.routes,
-          translations: Messages(languages: languages),
-          fallbackLocale: Locale(AppConstants.languages[0].languageCode, AppConstants.languages[0].countryCode),
-          defaultTransition: Transition.fadeIn,
-          transitionDuration: const Duration(milliseconds: 500),
-            builder:(context,child){
-              return MediaQuery(data: MediaQuery.of(context).copyWith(textScaler: TextScaler.noScaling), child: child!);
-            }
-        );
+            title: AppConstants.appName,
+            debugShowCheckedModeBanner: false,
+            navigatorKey: Get.key,
+            scrollBehavior: const MaterialScrollBehavior().copyWith(
+              dragDevices: {PointerDeviceKind.mouse, PointerDeviceKind.touch},
+            ),
+            theme: themeController.darkTheme ? darkTheme : lightTheme,
+            locale: localizeController.locale,
+            initialRoute:
+                RouteHelper.getSplashRoute(notificationData: notificationData),
+            getPages: RouteHelper.routes,
+            translations: Messages(languages: languages),
+            fallbackLocale: Locale(AppConstants.languages[0].languageCode,
+                AppConstants.languages[0].countryCode),
+            defaultTransition: Transition.fadeIn,
+            transitionDuration: const Duration(milliseconds: 500),
+            builder: (context, child) {
+              return MediaQuery(
+                  data: MediaQuery.of(context)
+                      .copyWith(textScaler: TextScaler.noScaling),
+                  child: child!);
+            });
       });
     });
   }
@@ -86,6 +89,8 @@ class MyApp extends StatelessWidget {
 class MyHttpOverrides extends HttpOverrides {
   @override
   HttpClient createHttpClient(SecurityContext? context) {
-    return super.createHttpClient(context)..badCertificateCallback = (X509Certificate cert, String host, int port) => true;
+    return super.createHttpClient(context)
+      ..badCertificateCallback =
+          (X509Certificate cert, String host, int port) => true;
   }
 }
