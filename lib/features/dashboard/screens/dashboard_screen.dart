@@ -38,11 +38,11 @@ class _DashboardScreenState extends State<DashboardScreen> {
         inactiveIcon: Images.homeOutline,
         screen: const HomeScreen(),
       ),
-      // NavigationModel(
-      //     name: "Trips",
-      //     activeIcon: Images.carTripeIcon,
-      //     inactiveIcon: Images.carTripeIcon,
-      //     screen: TripsHomeScreen()),
+      NavigationModel(
+          name: "Trips",
+          activeIcon: Images.carTripeIcon,
+          inactiveIcon: Images.carTripeIcon,
+          screen: WelcomePoolScreen()),
       NavigationModel(
         name: 'activity'.tr,
         activeIcon: Images.activityActive,

@@ -44,6 +44,10 @@ import 'package:ride_sharing_user_app/features/parcel/domain/repositories/parcel
 import 'package:ride_sharing_user_app/features/parcel/domain/services/parcel_service.dart';
 import 'package:ride_sharing_user_app/features/parcel/domain/services/parcel_service_interface.dart';
 import 'package:ride_sharing_user_app/features/payment/controllers/payment_controller.dart';
+import 'package:ride_sharing_user_app/features/pool_stop_pickup/domain/repositories/pool_repository.dart';
+import 'package:ride_sharing_user_app/features/pool_stop_pickup/domain/interfaces/pool_interface.dart';
+import 'package:ride_sharing_user_app/features/pool_stop_pickup/domain/services/pool_service.dart';
+import 'package:ride_sharing_user_app/features/pool_stop_pickup/controller/pool_stop_pickup_controller.dart';
 import 'package:ride_sharing_user_app/features/payment/domain/repositories/payment_repository.dart';
 import 'package:ride_sharing_user_app/features/payment/domain/repositories/payment_repository_interface.dart';
 import 'package:ride_sharing_user_app/features/payment/domain/services/payment_service.dart';
@@ -319,6 +323,12 @@ Future<Map<String, Map<String, String>>> init() async {
       SearchTripeController(searchTripeServiceInterface: Get.find());
 
   Get.lazyPut(() => searchController);
+
+  PoolInterface poolInterface = PoolRepository(apiClient: Get.find());
+  Get.lazyPut(() => poolInterface);
+  PoolService poolService = PoolService(poolRepository: Get.find());
+  Get.lazyPut(() => poolService);
+  Get.lazyPut(() => PoolStopPickupController(poolService: Get.find()));
 
   // Retrieving localized data
   Map<String, Map<String, String>> languages = {};
