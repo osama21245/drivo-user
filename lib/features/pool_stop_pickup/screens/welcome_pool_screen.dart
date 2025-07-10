@@ -826,20 +826,21 @@ class _WelcomePoolScreenState extends State<WelcomePoolScreen> {
     }
   }
 
-  void _searchForRides(PoolStopPickupController poolController) {
+  void _searchForRides(PoolStopPickupController poolController) async {
     // Search for available rides using the controller
-    poolController.searchAvailableTrips().then((_) {
-      if (poolController.availableTrips.isNotEmpty) {
-        // Navigate to search trip drivers screen
-        Get.to(() => const SearchTripDriversScreen());
-      } else {
-        Get.snackbar(
-          'no_rides_found'.tr,
-          'try_different_route'.tr,
-          backgroundColor: Colors.orange,
-          colorText: Colors.white,
-        );
-      }
-    });
+    await poolController.searchAvailableTrips();
+
+    // Check results after the search is complete
+    if (poolController.availableTrips.isNotEmpty) {
+      // Navigate to search trip drivers screen
+      Get.to(() => const SearchTripDriversScreen());
+    } else {
+      Get.snackbar(
+        'no_rides_found'.tr,
+        'try_different_route'.tr,
+        backgroundColor: Colors.orange,
+        colorText: Colors.white,
+      );
+    }
   }
 }

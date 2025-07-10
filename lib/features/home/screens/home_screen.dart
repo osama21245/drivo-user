@@ -135,6 +135,8 @@ class _HomeScreenState extends State<HomeScreen> {
     if (Get.find<ProfileController>().profileModel == null) {
       Get.find<ProfileController>().getProfileInfo();
     }
+    await Get.find<RideController>().getCurrentRideCarpool(type: "carpool");
+
     await Get.find<RideController>().getCurrentRide();
     if (Get.find<RideController>().currentTripDetails != null) {
       Get.find<RideController>().getBiddingList(
@@ -193,7 +195,7 @@ class _HomeScreenState extends State<HomeScreen> {
         return GetBuilder<ParcelController>(builder: (parcelController) {
           int parcelCount = parcelController.parcelListModel?.totalSize ?? 0;
           int rideCount = (rideController.rideDetails != null &&
-                  rideController.rideDetails!.type == 'ride_request' &&
+                  // rideController.rideDetails!.type == 'ride_request' &&
                   (rideController.rideDetails!.currentStatus == 'pending' ||
                       rideController.rideDetails!.currentStatus == 'accepted' ||
                       rideController.rideDetails!.currentStatus == 'ongoing' ||
@@ -451,68 +453,65 @@ class _HomeScreenState extends State<HomeScreen> {
             ),
 
             // Ongoing ride/parcel indicator
-            (rideCount + parcelCount) != 0
-                ? Positioned(
-                    child: Align(
-                    alignment: Alignment.topRight,
-                    child: Padding(
-                      padding: EdgeInsets.only(top: Get.height * 0.33),
-                      child: GestureDetector(
-                        onTap: () {
-                          setState(() {
-                            clickedMenu = true;
-                          });
-                        },
-                        onHorizontalDragEnd: (DragEndDetails details) {
-                          _onHorizontalDrag(details);
-                        },
-                        child: Stack(children: [
-                          SizedBox(
-                            width: 70,
-                            child: Image.asset(
-                              Images.homeMapIcon,
-                              color: Theme.of(context).primaryColor,
-                            ),
-                          ),
-                          Positioned(
-                            top: 0,
-                            bottom: 15,
-                            left: 35,
-                            right: 0,
-                            child: SizedBox(
-                                height: 10,
-                                child: Image.asset(Images.ongoing, scale: 2.7)),
-                          ),
-                          Positioned(
-                            bottom: 85,
-                            right: 5,
-                            child: Container(
-                              width: 20,
-                              height: 20,
-                              padding: const EdgeInsets.all(3),
-                              decoration: BoxDecoration(
-                                color: Theme.of(context)
-                                    .buttonTheme
-                                    .colorScheme!
-                                    .primary,
-                                borderRadius: BorderRadius.circular(50),
-                              ),
-                              child: Center(
-                                  child: Text(
-                                '${rideCount + parcelCount}',
-                                style: textRegular.copyWith(
-                                  color: Colors.white,
-                                  fontSize: Dimensions.fontSizeExtraSmall,
-                                ),
-                              )),
-                            ),
-                          )
-                        ]),
+            Positioned(
+                child: Align(
+              alignment: Alignment.topRight,
+              child: Padding(
+                padding: EdgeInsets.only(top: Get.height * 0.33),
+                child: GestureDetector(
+                  onTap: () {
+                    setState(() {
+                      clickedMenu = true;
+                    });
+                  },
+                  onHorizontalDragEnd: (DragEndDetails details) {
+                    _onHorizontalDrag(details);
+                  },
+                  child: Stack(children: [
+                    SizedBox(
+                      width: 70,
+                      child: Image.asset(
+                        Images.homeMapIcon,
+                        color: Theme.of(context).primaryColor,
                       ),
                     ),
-                  ))
-                : const SizedBox(),
-
+                    Positioned(
+                      top: 0,
+                      bottom: 15,
+                      left: 35,
+                      right: 0,
+                      child: SizedBox(
+                          height: 10,
+                          child: Image.asset(Images.ongoing, scale: 2.7)),
+                    ),
+                    Positioned(
+                      bottom: 85,
+                      right: 5,
+                      child: Container(
+                        width: 20,
+                        height: 20,
+                        padding: const EdgeInsets.all(3),
+                        decoration: BoxDecoration(
+                          color: Theme.of(context)
+                              .buttonTheme
+                              .colorScheme!
+                              .primary,
+                          borderRadius: BorderRadius.circular(50),
+                        ),
+                        child: Center(
+                            child: Text(
+                          '${rideCount + parcelCount}',
+                          style: textRegular.copyWith(
+                            color: Colors.white,
+                            fontSize: Dimensions.fontSizeExtraSmall,
+                          ),
+                        )),
+                      ),
+                    )
+                  ]),
+                ),
+              ),
+            )),
             // Clicked menu overlay
             if (clickedMenu)
               Positioned(

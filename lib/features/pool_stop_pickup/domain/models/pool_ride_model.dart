@@ -46,27 +46,34 @@ class PoolRide {
   });
 
   factory PoolRide.fromJson(Map<String, dynamic> json) {
-    return PoolRide(
-      routeId: json['route_id'] ?? 0,
-      driver: Driver.fromJson(json['driver'] ?? {}),
-      vehicle: Vehicle.fromJson(json['vehicle'] ?? {}),
-      category: json['category'] ?? '',
-      startTime: json['start_time'] ?? '',
-      seatsAvailable: json['seats_available'] ?? 0,
-      isAc: json['is_ac'] ?? false,
-      isSmokingAllowed: json['is_smoking_allowed'] ?? false,
-      pickupMatchPoint: MatchPoint.fromJson(json['pickup_match_point'] ?? {}),
-      dropoffMatchPoint: MatchPoint.fromJson(json['dropoff_match_point'] ?? {}),
-      pickupAddress: json['pickup_address'] ?? '',
-      dropoffAddress: json['dropoff_address'] ?? '',
-      price: json['price'] ?? 0,
-      hasMusic: json['has_music'] ?? false,
-      hasScreenEntertainment: json['has_screen_entertainment'] ?? false,
-      allowLuggage: json['allow_luggage'] ?? false,
-      allowedGender: json['allowed_gender'] ?? '',
-      allowedAgeMin: json['allowed_age_min'] ?? 0,
-      allowedAgeMax: json['allowed_age_max'] ?? 0,
-    );
+    try {
+      return PoolRide(
+        routeId: json['route_id'] ?? 0,
+        driver: Driver.fromJson(json['driver'] ?? {}),
+        vehicle: Vehicle.fromJson(json['vehicle'] ?? {}),
+        category: json['category'] ?? '',
+        startTime: json['start_time'] ?? '',
+        seatsAvailable: json['seats_available'] ?? 0,
+        isAc: json['is_ac'] ?? false,
+        isSmokingAllowed: json['is_smoking_allowed'] ?? false,
+        pickupMatchPoint: MatchPoint.fromJson(json['pickup_match_point'] ?? {}),
+        dropoffMatchPoint:
+            MatchPoint.fromJson(json['dropoff_match_point'] ?? {}),
+        pickupAddress: json['pickup_address'] ?? '',
+        dropoffAddress: json['dropoff_address'] ?? '',
+        price: json['price'] ?? 0,
+        hasMusic: json['has_music'] ?? false,
+        hasScreenEntertainment: json['has_screen_entertainment'] ?? false,
+        allowLuggage: json['allow_luggage'] ?? false,
+        allowedGender: json['allowed_gender'] ?? '',
+        allowedAgeMin: json['allowed_age_min'] ?? 0,
+        allowedAgeMax: json['allowed_age_max'] ?? 0,
+      );
+    } catch (e) {
+      print('Error parsing PoolRide: $e');
+      print('JSON data: $json');
+      rethrow;
+    }
   }
 
   Map<String, dynamic> toJson() {

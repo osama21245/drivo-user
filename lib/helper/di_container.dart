@@ -48,6 +48,8 @@ import 'package:ride_sharing_user_app/features/pool_stop_pickup/domain/repositor
 import 'package:ride_sharing_user_app/features/pool_stop_pickup/domain/interfaces/pool_interface.dart';
 import 'package:ride_sharing_user_app/features/pool_stop_pickup/domain/services/pool_service.dart';
 import 'package:ride_sharing_user_app/features/pool_stop_pickup/controller/pool_stop_pickup_controller.dart';
+import 'package:ride_sharing_user_app/features/pool_stop_pickup/controller/carpoll_ride_controller.dart';
+import 'package:ride_sharing_user_app/features/pool_stop_pickup/controller/carpoll_map_controller.dart';
 import 'package:ride_sharing_user_app/features/payment/domain/repositories/payment_repository.dart';
 import 'package:ride_sharing_user_app/features/payment/domain/repositories/payment_repository_interface.dart';
 import 'package:ride_sharing_user_app/features/payment/domain/services/payment_service.dart';
@@ -329,6 +331,8 @@ Future<Map<String, Map<String, String>>> init() async {
   PoolService poolService = PoolService(poolRepository: Get.find());
   Get.lazyPut(() => poolService);
   Get.lazyPut(() => PoolStopPickupController(poolService: Get.find()));
+  Get.lazyPut(() => CarPollRideController(rideServiceInterface: Get.find()));
+  Get.lazyPut(() => CarpollMapController());
 
   // Retrieving localized data
   Map<String, Map<String, String>> languages = {};

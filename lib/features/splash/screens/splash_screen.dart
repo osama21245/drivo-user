@@ -24,6 +24,7 @@ import 'package:ride_sharing_user_app/helper/notification_helper.dart';
 import 'package:ride_sharing_user_app/helper/pusher_helper.dart';
 import 'package:ride_sharing_user_app/util/app_constants.dart';
 import 'package:ride_sharing_user_app/util/images.dart';
+import 'package:ride_sharing_user_app/util/styles.dart';
 
 class SplashScreen extends StatefulWidget {
   final Map<String, dynamic>? notificationData;
@@ -239,12 +240,22 @@ class _SplashScreenState extends State<SplashScreen>
                   crossAxisAlignment: CrossAxisAlignment.center,
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
+                    const SizedBox(height: 130),
                     Opacity(
                       opacity: _animation.value,
                       child: Get.isDarkMode
                           ? Image.asset(Images.logoWithNameWhite, width: 160)
                           : Image.asset(Images.logoWithNameBlack, width: 160),
                     ),
+                    const SizedBox(height: 20),
+                    Opacity(
+                        opacity: _animation.value,
+                        child: Text(
+                          'International standards , local vibes',
+                          style: textBold.copyWith(
+                              fontSize: 11,
+                              color: const Color.fromARGB(198, 255, 255, 255)),
+                        )),
                     const SizedBox(height: 50),
                     // Image.asset(Images.splashBackgroundOne,
                     //     width: Get.width,

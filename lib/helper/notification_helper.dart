@@ -106,6 +106,29 @@ class NotificationHelper {
                 }
               }
             });
+          } else if (message.data['action'] == "carpo") {
+            Get.back();
+            Get.find<RideController>()
+                .getRideDetails(message.data['ride_request_id'])
+                .then((value) {
+              if (value.statusCode == 200) {
+                if (message.data['type'] == 'parcel') {
+                  Get.find<ParcelController>()
+                      .updateParcelState(ParcelDeliveryState.acceptRider);
+                  Get.find<RideController>().startLocationRecord();
+                  Get.find<MapController>().notifyMapController();
+                  Get.to(
+                      () => const MapScreen(fromScreen: MapScreenType.parcel));
+                } else {
+                  Get.find<RideController>()
+                      .updateRideCurrentState(RideState.acceptingRider);
+                  Get.find<RideController>().startLocationRecord();
+                  Get.find<MapController>().notifyMapController();
+                  Get.to(
+                      () => const MapScreen(fromScreen: MapScreenType.splash));
+                }
+              }
+            });
           } else if (message.data['action'] == "new_message_arrived") {
             Get.find<MessageController>()
                 .getConversation(message.data['type'], 1);

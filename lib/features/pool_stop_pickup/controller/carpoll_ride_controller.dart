@@ -24,7 +24,7 @@ import 'package:ride_sharing_user_app/features/home/controllers/category_control
 import 'package:ride_sharing_user_app/features/address/domain/models/address_model.dart';
 import 'package:ride_sharing_user_app/features/location/controllers/location_controller.dart';
 import 'package:ride_sharing_user_app/features/location/view/access_location_screen.dart';
-import 'package:ride_sharing_user_app/features/map/controllers/map_controller.dart';
+import 'package:ride_sharing_user_app/features/pool_stop_pickup/controller/carpoll_map_controller.dart';
 import 'package:ride_sharing_user_app/features/parcel/controllers/parcel_controller.dart';
 import 'package:ride_sharing_user_app/features/payment/controllers/payment_controller.dart';
 
@@ -41,9 +41,9 @@ enum RideState {
 
 enum RideType { car, bike, parcel, luxury }
 
-class RideController extends GetxController implements GetxService {
+class CarPollRideController extends GetxController implements GetxService {
   final RideServiceInterface rideServiceInterface;
-  RideController({required this.rideServiceInterface});
+  CarPollRideController({required this.rideServiceInterface});
 
   RideState currentRideState = RideState.initial;
   RideType selectedCategory = RideType.car;
@@ -252,8 +252,26 @@ class RideController extends GetxController implements GetxService {
     return response;
   }
 
-  Future<Response> submitRideRequest(String note, bool parcel,
-      {String categoryId = ''}) async {
+  Future<Response> carpoolSubmitRideRequest(
+      String carpollRouteId,
+      double price,
+      double pickupLat,
+      double pickupLng,
+      double destinationLat,
+      double destinationLng) async {
+    Response response = await rideServiceInterface.carpoolSubmitRideRequest(
+      carpollRouteId: carpollRouteId,
+      price: price,
+      pickupLat: pickupLat,
+      pickupLng: pickupLng,
+      destinationLat: destinationLat,
+      destinationLng: destinationLng,
+    );
+    return response;
+  }
+
+  Future<Response> submitRideRequest(
+      String note, bool parcel, int? carpollRouteId) async {
     initCountingTimeStates();
     isSubmit = true;
     update();
@@ -287,7 +305,7 @@ class RideController extends GetxController implements GetxService {
           ? Get.find<ParcelController>().receiverAddressController.text
           : locController.toAddress?.address ??
               tripDetails!.destinationAddress!,
-      vehicleCategoryId: parcel ? categoryId : selectedCategoryId,
+      vehicleCategoryId: selectedCategoryId,
       estimatedDistance: parcel
           ? parcelEstimatedFare!.data!.estimatedDistance!.toString()
           : estimatedDistance,
@@ -426,7 +444,7 @@ class RideController extends GetxController implements GetxService {
 
     Response response = await rideServiceInterface.getRideDetails(tripId);
     if (response.statusCode == 200) {
-      Get.find<MapController>().notifyMapController();
+      Get.find<CarpollMapController>().notifyMapController();
       tripDetails = TripDetailsModel.fromJson(response.body).data!;
       estimatedDistance = tripDetails!.estimatedDistance!.toString();
       isLoading = false;
@@ -475,15 +493,15 @@ class RideController extends GetxController implements GetxService {
         updateRideCurrentState(currentRideStatus == AppConstants.accepted
             ? RideState.acceptingRider
             : RideState.ongoingRide);
-        Get.find<MapController>().notifyMapController();
+        Get.find<CarpollMapController>().notifyMapController();
         if (navigateToMap) {
           Get.to(() => const MapScreen(fromScreen: MapScreenType.splash));
         }
       } else if (currentRideStatus == AppConstants.pending) {
-        Get.find<RideController>()
+        Get.find<CarPollRideController>()
             .updateRideCurrentState(RideState.findingRider);
-        Get.find<RideController>().getBiddingList(tripDetails!.id!, 1);
-        Get.find<MapController>().notifyMapController();
+        Get.find<CarPollRideController>().getBiddingList(tripDetails!.id!, 1);
+        Get.find<CarpollMapController>().notifyMapController();
         if (navigateToMap) {
           Get.to(() => const MapScreen(fromScreen: MapScreenType.splash));
         }
@@ -521,27 +539,6 @@ class RideController extends GetxController implements GetxService {
       bool navigateToMap = true,
       String type = ''}) async {
     Response response = await rideServiceInterface.currentRideStatus(type);
-    print(" ride====== ${response.body['data']}");
-
-    if (response.statusCode == 200 && response.body['data'] != null) {
-      tripDetails =
-          rideDetails = TripDetailsModel.fromJson(response.body).data!;
-      estimatedDistance = rideDetails!.estimatedDistance!.toString();
-      encodedPolyLine = rideDetails!.encodedPolyline ?? '';
-    } else if (response.statusCode == 403) {
-      rideDetails = null;
-    }
-    update();
-    return response;
-  }
-
-  Future<Response> getCurrentRideCarpool(
-      {bool fromRefresh = false,
-      bool navigateToMap = true,
-      String type = ''}) async {
-    Response response = await rideServiceInterface.currentRideStatus("carpool");
-    print(" carpool======  ${response.body['data']}");
-
     if (response.statusCode == 200 && response.body['data'] != null) {
       tripDetails =
           rideDetails = TripDetailsModel.fromJson(response.body).data!;
@@ -559,7 +556,7 @@ class RideController extends GetxController implements GetxService {
     isLoading = true;
     Response response = await rideServiceInterface.remainDistance(requestID);
     if (response.statusCode == 200) {
-      Get.find<MapController>().getDriverToPickupOrDestinationPolyline(
+      Get.find<CarpollMapController>().getDriverToPickupOrDestinationPolyline(
           response.body[0]["encoded_polyline"],
           mapBound: mapBound);
       remainingDistanceModel = [];
@@ -567,12 +564,12 @@ class RideController extends GetxController implements GetxService {
         remainingDistanceModel.add(RemainingDistanceModel.fromJson(distance));
       }
 
-      if (Get.find<MapController>().isInside &&
+      if (Get.find<CarpollMapController>().isInside &&
           tripDetails != null &&
           currentRideState == RideState.acceptingRider) {
         currentRideState = RideState.otpSent;
       }
-      if (Get.find<MapController>().isInside &&
+      if (Get.find<CarpollMapController>().isInside &&
           Get.find<ParcelController>().currentParcelState ==
               ParcelDeliveryState.acceptRider) {
         Get.find<ParcelController>()
@@ -636,7 +633,7 @@ class RideController extends GetxController implements GetxService {
       nearestDriverList = [];
       nearestDriverList
           .addAll(NearestDriverModel.fromJson(response.body).data!);
-      Get.find<MapController>().searchDeliveryMen();
+      Get.find<CarpollMapController>().searchDeliveryMen();
     } else {
       ApiChecker.checkApi(response);
     }
@@ -647,24 +644,24 @@ class RideController extends GetxController implements GetxService {
   Timer? _timer;
   void startLocationRecord() {
     ///For First time call next call every 10 seconds.......
-    if (Get.find<RideController>().tripDetails != null &&
+    if (Get.find<CarPollRideController>().tripDetails != null &&
         Get.find<AuthController>().getUserToken() != '') {
-      Get.find<RideController>().remainingDistance(
-          Get.find<RideController>().tripDetails!.id!,
+      Get.find<CarPollRideController>().remainingDistance(
+          Get.find<CarPollRideController>().tripDetails!.id!,
           mapBound: true);
     } else {
       _timer?.cancel();
     }
     _timer?.cancel();
     _timer = Timer.periodic(const Duration(seconds: 10), (timer) {
-      if (Get.find<RideController>().tripDetails != null &&
+      if (Get.find<CarPollRideController>().tripDetails != null &&
           Get.find<AuthController>().getUserToken() != '' &&
-          (Get.find<RideController>().tripDetails?.currentStatus ==
+          (Get.find<CarPollRideController>().tripDetails?.currentStatus ==
                   'accepted' ||
-              Get.find<RideController>().tripDetails?.currentStatus ==
+              Get.find<CarPollRideController>().tripDetails?.currentStatus ==
                   'ongoing')) {
-        Get.find<RideController>()
-            .remainingDistance(Get.find<RideController>().tripDetails!.id!);
+        Get.find<CarPollRideController>().remainingDistance(
+            Get.find<CarPollRideController>().tripDetails!.id!);
       } else {
         _timer?.cancel();
       }
@@ -689,7 +686,7 @@ class RideController extends GetxController implements GetxService {
         if (value.statusCode == 200) {
           remainingDistance(tripDetails!.id!, mapBound: true);
           updateRideCurrentState(RideState.otpSent);
-          Get.find<MapController>().notifyMapController();
+          Get.find<CarpollMapController>().notifyMapController();
           Get.offAll(() => const MapScreen(fromScreen: MapScreenType.ride));
         }
       });

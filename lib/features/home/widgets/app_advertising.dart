@@ -4,6 +4,8 @@ import 'package:ride_sharing_user_app/util/app_constants.dart';
 import 'package:ride_sharing_user_app/util/dimensions.dart';
 import 'package:ride_sharing_user_app/util/styles.dart';
 
+import '../../../util/images.dart';
+
 class AppAdvertising extends StatelessWidget {
   const AppAdvertising({super.key});
 
@@ -17,7 +19,7 @@ class AppAdvertising extends StatelessWidget {
           // Safe Trips Section
           Expanded(
             child: Container(
-              height: 160,
+              height: 140,
               padding: const EdgeInsets.all(16),
               decoration: BoxDecoration(
                 gradient: LinearGradient(
@@ -72,13 +74,13 @@ class AppAdvertising extends StatelessWidget {
                       ),
                     ),
                     child: Image.asset(
-                      'assets/image/privacy_policy.png',
+                      Images.shieldIcon,
                       color: Theme.of(context).primaryColor,
                       fit: BoxFit.contain,
                     ),
                   ),
 
-                  const SizedBox(height: 12),
+                  const SizedBox(height: 1),
 
                   // Text Content
                   Expanded(
@@ -88,43 +90,22 @@ class AppAdvertising extends StatelessWidget {
                       children: [
                         // Title Text
                         Text(
-                          'استمتع برحلات',
+                          'Safety and comfort',
                           style: textBold.copyWith(
-                            fontSize: 15,
+                            fontSize: 13,
                             color: Theme.of(context).primaryColor,
-                            height: 1.2,
                           ),
                         ),
 
-                        const SizedBox(height: 2),
+                        const SizedBox(height: 4),
 
                         // Subtitle Text
                         Text(
-                          'آمنة مع ${AppConstants.appName}',
+                          'Driven by Safty, Powered by Trust.',
                           style: textSemiBold.copyWith(
-                            fontSize: 13,
+                            fontSize: 10,
                             color: Theme.of(context).hintColor,
                             height: 1.2,
-                          ),
-                        ),
-
-                        const SizedBox(height: 6),
-
-                        // Description
-                        Flexible(
-                          child: Text(
-                            'متمسكين بعرف خصوصياتك اليومية',
-                            style: textRegular.copyWith(
-                              fontSize: 10,
-                              color: Theme.of(context)
-                                  .textTheme
-                                  .bodyMedium
-                                  ?.color
-                                  ?.withOpacity(0.6),
-                              height: 1.3,
-                            ),
-                            maxLines: 2,
-                            overflow: TextOverflow.ellipsis,
                           ),
                         ),
                       ],
@@ -140,7 +121,7 @@ class AppAdvertising extends StatelessWidget {
           // Discounts Section
           Expanded(
             child: Container(
-              height: 160,
+              height: 140,
               padding: const EdgeInsets.all(16),
               decoration: BoxDecoration(
                 color: Theme.of(context).cardColor,
@@ -203,13 +184,13 @@ class AppAdvertising extends StatelessWidget {
                       ),
                     ),
                     child: Image.asset(
-                      'assets/image/discount_coupon_icon.png',
+                      Images.discountCopoun,
                       color: Theme.of(context).primaryColor,
                       fit: BoxFit.contain,
                     ),
                   ),
 
-                  const SizedBox(height: 12),
+                  const SizedBox(height: 1),
 
                   // Text Content
                   Expanded(
@@ -218,24 +199,15 @@ class AppAdvertising extends StatelessWidget {
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
                         // Title Text
-                        Text(
-                          'خصومات',
-                          style: textBold.copyWith(
-                            fontSize: 15,
-                            color: Theme.of(context).primaryColor,
-                            height: 1.2,
-                          ),
-                        ),
 
                         const SizedBox(height: 2),
 
                         // Subtitle Text
                         Text(
-                          'مستنياك',
+                          'Nonstop Offers',
                           style: textSemiBold.copyWith(
                             fontSize: 13,
                             color: Theme.of(context).primaryColor,
-                            height: 1.2,
                           ),
                         ),
 
@@ -244,7 +216,7 @@ class AppAdvertising extends StatelessWidget {
                         // Description
                         Flexible(
                           child: Text(
-                            'وفر جنيه على كل رحلة',
+                            'Unlock exclusive coupones every month - only on Drivo',
                             style: textRegular.copyWith(
                               fontSize: 10,
                               color: Theme.of(context)

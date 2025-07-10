@@ -20,17 +20,40 @@ class FindMatchResponse {
   });
 
   factory FindMatchResponse.fromJson(Map<String, dynamic> json) {
-    return FindMatchResponse(
-      responseCode: json['response_code'] ?? '',
-      message: json['message'] ?? '',
-      totalSize: json['total_size'],
-      limit: json['limit'],
-      offset: json['offset'],
-      data: (json['data'] as List? ?? [])
-          .map((e) => PoolRide.fromJson(e))
-          .toList(),
-      errors: json['errors'] ?? [],
-    );
+    try {
+      List<dynamic> dataList = json['data'] as List? ?? [];
+      List<PoolRide> rides = [];
+
+      for (int i = 0; i < dataList.length; i++) {
+        try {
+          PoolRide ride = PoolRide.fromJson(dataList[i]);
+          rides.add(ride);
+        } catch (e) {
+          print('Error parsing ride $i: $e');
+          // Continue parsing other rides instead of failing completely
+          continue;
+        }
+      }
+
+      return FindMatchResponse(
+        responseCode: json['response_code'] ?? '',
+        message: json['message'] ?? '',
+        totalSize: json['total_size'], // Keep as null if null
+        limit: json['limit'], // Keep as null if null
+        offset: json['offset'], // Keep as null if null
+        data: rides,
+        errors: json['errors'] ?? [],
+      );
+    } catch (e) {
+      print('Error parsing FindMatchResponse: $e');
+      // Return empty response instead of throwing
+      return FindMatchResponse(
+        responseCode: '',
+        message: 'Failed to parse response',
+        data: [],
+        errors: [],
+      );
+    }
   }
 
   Map<String, dynamic> toJson() {

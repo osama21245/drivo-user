@@ -12,12 +12,22 @@ class Driver {
   });
 
   factory Driver.fromJson(Map<String, dynamic> json) {
-    return Driver(
-      id: json['id'] ?? '',
-      fullName: json['full_name'] ?? '',
-      gender: json['gender'] ?? '',
-      profileImage: json['profile_image'],
-    );
+    try {
+      return Driver(
+        id: json['id'] ?? '',
+        fullName: json['full_name'] ?? '',
+        gender: json['gender'] ?? '',
+        profileImage: json['profile_image'],
+      );
+    } catch (e) {
+      print('Error parsing Driver: $e');
+      return Driver(
+        id: '',
+        fullName: '',
+        gender: '',
+        profileImage: null,
+      );
+    }
   }
 
   Map<String, dynamic> toJson() {

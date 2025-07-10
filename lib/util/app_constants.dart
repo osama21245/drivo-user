@@ -5,8 +5,8 @@ import 'package:ride_sharing_user_app/util/images.dart';
 
 class AppConstants {
   static const String appName = 'Drivo';
-  static const String baseUrl =
-      'https://drivoeg.com'; /* 'https://drivemond-admin.codemond.com'; */
+  static const String baseUrl = 'http://192.168.0.114:8000';
+  //'https://drivoeg.com'; /* 'https://drivemond-admin.codemond.com'; */
   static const double appVersion = 2.1;
   static const String mapKey = "AIzaSyCeF4BHLDezqD1pH7mlzxEchtX962QU9Os";
 
@@ -124,6 +124,8 @@ class AppConstants {
   static const String addDriverTripe = '/api/driver/register-route';
   static const String allSearchTripe = '/api/passenger/find-match';
   static const String joinTripe = '/api/passenger/join';
+  static const String carpoolSubmitRideRequest =
+      '/api/passenger/create-carpool-request';
 
   /// Shared Key
   static const String notification = 'notification';

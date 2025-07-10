@@ -39,13 +39,9 @@ class _HomeMyAddressState extends State<HomeMyAddress> {
                 widget.title ?? 'my_address'.tr,
                 style: textSemiBold.copyWith(
                     fontSize: Dimensions.fontSizeDefault,
-                    color: Get.isDarkMode
-                        ? Theme.of(context)
-                            .textTheme
-                            .bodyMedium!
-                            .color!
-                            .withOpacity(0.9)
-                        : null),
+                    fontWeight: FontWeight.w900,
+                    color:
+                        Get.isDarkMode ? Theme.of(context).primaryColor : null),
               ),
               if (addressController.addressList != null &&
                   addressController.addressList!.isNotEmpty)
@@ -109,7 +105,9 @@ class _HomeMyAddressState extends State<HomeMyAddress> {
                                         Dimensions.paddingSizeExtraSmall),
                                   ),
                                   child: Center(
-                                      child: Icon(Icons.add,
+                                      child: Image.asset(Images.plusIcon,
+                                          width: 20,
+                                          height: 20,
                                           color:
                                               Theme.of(context).primaryColor)),
                                 ),

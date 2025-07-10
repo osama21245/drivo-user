@@ -104,10 +104,8 @@ class ProfileScreen extends StatelessWidget {
                                         "${'level'.tr} : ${profileController.profileModel?.data?.level?.name ?? '0'}",
                                         style: textBold.copyWith(
                                           color: Theme.of(context)
-                                              .textTheme
-                                              .bodyMedium!
-                                              .color!
-                                              .withOpacity(0.8),
+                                              .primaryColorDark
+                                              .withOpacity(0.7),
                                           fontSize: Dimensions.fontSizeSmall,
                                         ),
                                       ),

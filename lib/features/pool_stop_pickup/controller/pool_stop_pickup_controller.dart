@@ -3,6 +3,7 @@ import 'package:get/get.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:ride_sharing_user_app/features/location/controllers/location_controller.dart';
 import 'package:ride_sharing_user_app/features/address/domain/models/address_model.dart';
+import 'package:ride_sharing_user_app/features/pool_stop_pickup/controller/carpoll_ride_controller.dart';
 import 'package:ride_sharing_user_app/features/pool_stop_pickup/domain/services/pool_service.dart';
 import 'package:ride_sharing_user_app/features/pool_stop_pickup/domain/models/find_match_request.dart';
 import 'package:ride_sharing_user_app/features/pool_stop_pickup/domain/models/find_match_response.dart';
@@ -90,19 +91,31 @@ class PoolStopPickupController extends GetxController implements GetxService {
       FindMatchResponse? response =
           await poolService.findMatchingRides(request);
 
+      // Process the response
       if (response != null && response.responseCode == 'default_200') {
-        availableTrips = response.data;
+        // Clear previous results
+        availableTrips.clear();
+
+        // Add new results
+        availableTrips.addAll(response.data);
+
+        // Update UI
+        update();
+
         if (availableTrips.isEmpty) {
           Get.snackbar('No Rides Found', 'Try different route or date');
+        } else {
+          print('Found ${availableTrips.length} rides successfully');
         }
       } else {
+        availableTrips.clear();
         Get.snackbar(
             'Error', response?.message ?? 'Failed to search for trips');
-        availableTrips = [];
       }
     } catch (e) {
-      Get.snackbar('Error', 'Failed to search for trips: ${e.toString()}');
-      availableTrips = [];
+      availableTrips.clear();
+      Get.snackbar(
+          'Error', 'Failed to search for hihuhihstrips: ${e.toString()}');
     } finally {
       _isSearchingTrips = false;
       update();
@@ -140,6 +153,14 @@ class PoolStopPickupController extends GetxController implements GetxService {
           backgroundColor: Colors.green,
           colorText: Colors.white,
         );
+
+        await Get.find<CarPollRideController>().carpoolSubmitRideRequest(
+            poolRide.routeId.toString(),
+            poolRide.price.toDouble(),
+            pickupAddress!.latitude!,
+            pickupAddress!.longitude!,
+            destinationAddress!.latitude!,
+            destinationAddress!.longitude!);
         // Optionally navigate to a different screen or refresh data
       } else {
         Get.snackbar(

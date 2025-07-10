@@ -120,6 +120,9 @@ class Images {
   static const String office = 'assets/image/office.png';
   static const String road = 'assets/image/road.png';
   static const String delete = 'assets/image/delete.png';
+  static const String discountCopoun = 'assets/image/discount-coupon.png';
+  static const String plusIcon = 'assets/image/plus.png';
+  static const String shieldIcon = 'assets/image/shield.png';
   static const String targetLocationIcon =
       'assets/image/target_location_icon.png';
   static const String fromIcon = 'assets/image/from_icon.png';
