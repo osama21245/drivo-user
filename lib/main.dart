@@ -36,6 +36,7 @@ Future<void> main() async {
   //   FirebaseCrashlytics.instance.recordError(error, stack, fatal: true);
   //   return true;
   // };
+  //to edit
 
   Map<String, Map<String, String>> languages = await di.init();
   final RemoteMessage? remoteMessage =
