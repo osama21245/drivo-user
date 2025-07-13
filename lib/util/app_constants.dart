@@ -42,7 +42,7 @@ class AppConstants {
       '/api/customer/config/distance_api';
   static const String placeApiDetails =
       '/api/customer/config/place-api-details';
-  static const String estimatedFare = '/api/customer/ride/get-estimated-fare'; // here is the price api 
+  static const String estimatedFare = '/api/customer/ride/get-estimated-fare'; // #find
   static const String rideRequest = '/api/customer/ride/create';
   static const String addNewAddress = '/api/customer/address/add';
   static const String getAddressList =

@@ -5,7 +5,6 @@ import 'package:ride_sharing_user_app/features/ride/controllers/ride_controller.
 import 'package:ride_sharing_user_app/features/splash/controllers/config_controller.dart';
 import 'package:ride_sharing_user_app/helper/price_converter.dart';
 import 'package:ride_sharing_user_app/util/styles.dart';
-import 'package:ride_sharing_user_app/util/dimensions.dart';
 
 class PriceWidget extends StatefulWidget {
   const PriceWidget({super.key});
