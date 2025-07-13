@@ -1,6 +1,8 @@
 import 'package:get/get.dart';
 import 'package:ride_sharing_user_app/features/splash/controllers/config_controller.dart';
 
+
+// use thiss class #find
 class PriceConverter {
 
   static String convertPrice(double price, {double? discount, String? discountType,bool? loyaltyPoint}) {

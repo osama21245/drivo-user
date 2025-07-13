@@ -186,6 +186,7 @@ class LocationController extends GetxController implements GetxService {
     try {
       String baserUrl =
           "https://maps.googleapis.com/maps/api/geocode/json?latlng=$lat,$lng&key=${AppConstants.mapKey}";
+      print('baserUrl: $baserUrl');
       final response = await http.get(Uri.parse(baserUrl));
       if (response.statusCode == 200) {
         var data = jsonDecode(response.body);

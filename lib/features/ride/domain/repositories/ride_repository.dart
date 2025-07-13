@@ -62,7 +62,7 @@ class RideRepository implements RideRepositoryInterface {
     required String vehicleCategoryId,
     required String estimatedDistance,
     required String estimatedTime,
-    required String estimatedFare,
+    required String estimatedFare, // here 
     required String actualFare,
     required String note,
     required String paymentMethod,

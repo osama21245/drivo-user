@@ -1,4 +1,9 @@
 {
+  "estimated_fare": "Estimated Fare",
+  "best_price": "Best Price",
+  "calculating_fare": "Calculating Fare",
+  "please_wait_while_we_find_best_route": "Please wait while we find the best route...",
+
   "connection_to_api_server_failed": "Connection to api server failed due to internet connection",
   "on_boarding_1_title": "Searching\na car to go\nyour\ndestination? ",
   "on_boarding_2_title": "Select\nyour destination\nfrom map",

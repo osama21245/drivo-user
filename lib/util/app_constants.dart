@@ -5,7 +5,8 @@ import 'package:ride_sharing_user_app/util/images.dart';
 
 class AppConstants {
   static const String appName = 'Drivo';
-  static const String baseUrl = 'http://192.168.0.114:8000';
+  // static const String baseUrl = 'http://192.168.0.114:8000';
+  static const String baseUrl = 'https://drivoeg.com';
   //'https://drivoeg.com'; /* 'https://drivemond-admin.codemond.com'; */
   static const double appVersion = 2.1;
   static const String mapKey = "AIzaSyCeF4BHLDezqD1pH7mlzxEchtX962QU9Os";
@@ -41,7 +42,7 @@ class AppConstants {
       '/api/customer/config/distance_api';
   static const String placeApiDetails =
       '/api/customer/config/place-api-details';
-  static const String estimatedFare = '/api/customer/ride/get-estimated-fare';
+  static const String estimatedFare = '/api/customer/ride/get-estimated-fare'; // here is the price api 
   static const String rideRequest = '/api/customer/ride/create';
   static const String addNewAddress = '/api/customer/address/add';
   static const String getAddressList =

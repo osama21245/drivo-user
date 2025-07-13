@@ -6,7 +6,9 @@ import 'package:ride_sharing_user_app/features/dashboard/screens/dashboard_scree
 import 'package:ride_sharing_user_app/features/map/screens/map_screen.dart';
 import 'package:ride_sharing_user_app/features/parcel/controllers/parcel_controller.dart';
 import 'package:ride_sharing_user_app/features/set_destination/widget/input_field_for_set_route.dart';
+import 'package:ride_sharing_user_app/features/ride/widgets/price_widget.dart';
 import 'package:ride_sharing_user_app/helper/display_helper.dart';
+import 'package:ride_sharing_user_app/helper/price_converter.dart';
 import 'package:ride_sharing_user_app/helper/route_helper.dart';
 import 'package:ride_sharing_user_app/localization/localization_controller.dart';
 import 'package:ride_sharing_user_app/util/dimensions.dart';
@@ -679,6 +681,7 @@ class _SetDestinationScreenState extends State<SetDestinationScreen> {
                                     ]),
                               )),
                             ]),
+                        const SizedBox(height: Dimensions.paddingSizeDefault),
                         Padding(
                           padding: const EdgeInsets.fromLTRB(
                             Dimensions.paddingSizeExtraLarge,
@@ -804,6 +807,7 @@ class _SetDestinationScreenState extends State<SetDestinationScreen> {
                 ),
               ),
             ])),
+            // PriceWidget(),
             locationController.resultShow
                 ? Positioned(
                     top: 0,

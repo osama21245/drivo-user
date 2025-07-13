@@ -1,4 +1,9 @@
 {
+  "estimated_fare": "السعر المقدر",
+  "best_price": "أفضل الأسعار",
+  "calculating_fare": "جاري الحساب",
+  "please_wait_while_we_find_best_route": "يرجى الإنتظار لمدة أطول أثناء البحث عن أفضل الأسعار",
+  
   "connection_to_api_server_failed": "فشل الاتصال بخادم API بسبب مشكلة في الإنترنت",
   "on_boarding_1_title": "بتدور على توصيلة توصلك؟",
   "on_boarding_2_title": "اختيار وجهتك بسهولة على الخريطة",

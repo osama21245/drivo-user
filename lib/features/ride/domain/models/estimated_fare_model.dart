@@ -3,12 +3,11 @@ class EstimatedFareModel {
   String? message;
   List<FareModel>? data;
 
-
-  EstimatedFareModel(
-      {this.responseCode,
-        this.message,
-        this.data,
-       });
+  EstimatedFareModel({
+    this.responseCode,
+    this.message,
+    this.data,
+  });
 
   EstimatedFareModel.fromJson(Map<String, dynamic> json) {
     responseCode = json['response_code'];
@@ -19,7 +18,6 @@ class EstimatedFareModel {
         data!.add(FareModel.fromJson(v));
       });
     }
-
   }
 
   Map<String, dynamic> toJson() {
@@ -44,10 +42,10 @@ class FareModel {
   double? fare;
   String? estimatedDistance;
   String? estimatedDuration;
-  double? estimatedFare;
+  double? estimatedFare; // here is the price
   double? discountFare;
   double? discountAmount;
-  bool?   couponApplicable;
+  bool? couponApplicable;
   String? requestType;
   String? polyline;
   String? areaId;
@@ -60,33 +58,32 @@ class FareModel {
   double? extraFareFee;
   String? extraFareReason;
 
-
-  FareModel(
-      {this.id,
-        this.zoneId,
-        this.vehicleCategoryId,
-        this.vehicleCategoryType,
-        this.baseFare,
-        this.baseFarePerKm,
-        this.fare,
-        this.estimatedDistance,
-        this.estimatedDuration,
-        this.estimatedFare,
-        this.requestType,
-        this.polyline,
-        this.areaId,
-        this.discountAmount,
-        this.couponApplicable,
-        this.discountFare,
-        this.extraCancellationFee,
-        this.extraDiscountAmount,
-        this.extraDiscountFare,
-        this.extraEstimatedFare,
-        this.extraFareAmount,
-        this.extraFareFee,
-        this.extraFareReason,
-        this.extraReturnFee,
-      });
+  FareModel({
+    this.id,
+    this.zoneId,
+    this.vehicleCategoryId,
+    this.vehicleCategoryType,
+    this.baseFare,
+    this.baseFarePerKm,
+    this.fare,
+    this.estimatedDistance,
+    this.estimatedDuration,
+    this.estimatedFare,
+    this.requestType,
+    this.polyline,
+    this.areaId,
+    this.discountAmount,
+    this.couponApplicable,
+    this.discountFare,
+    this.extraCancellationFee,
+    this.extraDiscountAmount,
+    this.extraDiscountFare,
+    this.extraEstimatedFare,
+    this.extraFareAmount,
+    this.extraFareFee,
+    this.extraFareReason,
+    this.extraReturnFee,
+  });
 
   FareModel.fromJson(Map<String, dynamic> json) {
     id = json['id'];
