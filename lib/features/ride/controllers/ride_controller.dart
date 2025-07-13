@@ -48,6 +48,7 @@ class RideController extends GetxController implements GetxService {
   RideState currentRideState = RideState.initial;
   RideType selectedCategory = RideType.car;
   TripDetails? tripDetails;
+  TripDetails? carpoolTripDetails;
   TripDetails? rideDetails;
   double currentFarePrice = 0;
   int rideCategoryIndex = 0;
@@ -74,6 +75,7 @@ class RideController extends GetxController implements GetxService {
   List<String>? get thumbnailPaths => _thumbnailPaths;
 
   TripDetails? get currentTripDetails => tripDetails;
+  TripDetails? get currentCarpoolTripDetails => carpoolTripDetails;
 
   TextEditingController inputFarePriceController =
       TextEditingController(text: '0.00');
@@ -516,6 +518,122 @@ class RideController extends GetxController implements GetxService {
     return response;
   }
 
+  Future<Response> getCarpoolRideDetails(String tripId,
+      {bool isUpdate = true}) async {
+    isLoading = true;
+    carpoolTripDetails = null;
+    _thumbnailPaths = null;
+    if (isUpdate) {
+      update();
+    }
+
+    Response response = await rideServiceInterface.getRideDetails(tripId);
+    if (response.statusCode == 200) {
+      Get.find<MapController>().notifyMapController();
+      carpoolTripDetails = TripDetailsModel.fromJson(response.body).data!;
+      estimatedDistance = carpoolTripDetails!.estimatedDistance!.toString();
+      isLoading = false;
+
+      encodedPolyLine = carpoolTripDetails!.encodedPolyline!;
+      List<Attachments> attachments =
+          carpoolTripDetails?.parcelRefund?.attachments ?? [];
+      _thumbnailPaths = List.filled(attachments.length, '');
+
+      if (carpoolTripDetails?.parcelRefund?.attachments != null) {
+        Future.forEach(carpoolTripDetails!.parcelRefund!.attachments!,
+            (element) async {
+          if (element.file!.contains('.mp4')) {
+            String? path = await Get.find<RefundRequestController>()
+                .generateThumbnail(element.file!);
+            _thumbnailPaths?[carpoolTripDetails!.parcelRefund!.attachments!
+                .indexOf(element)] = path ?? '';
+
+            update();
+          }
+        });
+      }
+    }
+
+    update();
+    return response;
+  }
+
+  Future<Response> getCurrentCarpoolRideStatus(
+      {bool fromRefresh = false,
+      bool navigateToMap = true,
+      String type = 'carpool'}) async {
+    runningTrip = true;
+    Response response = await rideServiceInterface.currentRideStatus(type);
+    if (response.statusCode == 200 && response.body['data'] != null) {
+      runningTrip = false;
+      carpoolTripDetails = TripDetailsModel.fromJson(response.body).data!;
+      estimatedDistance = carpoolTripDetails!.estimatedDistance!.toString();
+      String currentRideStatus = carpoolTripDetails!.currentStatus!;
+      encodedPolyLine = carpoolTripDetails!.encodedPolyline ?? '';
+
+      if (currentRideStatus == AppConstants.accepted ||
+          currentRideStatus == AppConstants.ongoing) {
+        updateRideCurrentState(currentRideStatus == AppConstants.accepted
+            ? RideState.acceptingRider
+            : RideState.ongoingRide);
+        Get.find<MapController>().notifyMapController();
+        if (navigateToMap) {
+          Get.to(() => const MapScreen(fromScreen: MapScreenType.splash));
+        }
+      } else if (currentRideStatus == AppConstants.pending) {
+        Get.find<RideController>()
+            .updateRideCurrentState(RideState.findingRider);
+        Get.find<RideController>().getBiddingList(carpoolTripDetails!.id!, 1);
+        Get.find<MapController>().notifyMapController();
+        if (navigateToMap) {
+          Get.to(() => const MapScreen(fromScreen: MapScreenType.splash));
+        }
+      } else if (currentRideStatus == AppConstants.completed ||
+          currentRideStatus == AppConstants.cancelled) {
+        getFinalFare(carpoolTripDetails!.id!);
+        Get.off(() => const PaymentScreen());
+      } else {
+        if (Get.find<LocationController>().getUserAddress() != null) {
+          if (!fromRefresh) {
+            Get.offAll(() => const DashboardScreen());
+          }
+        } else {
+          Get.offAll(() => const AccessLocationScreen());
+        }
+      }
+    } else {
+      runningTrip = false;
+      carpoolTripDetails = null;
+      if (Get.find<LocationController>().getUserAddress() != null) {
+        if (!fromRefresh) {
+          Get.offAll(() => const DashboardScreen());
+        }
+      } else {
+        Get.to(() => const AccessLocationScreen());
+      }
+    }
+    update();
+    return response;
+  }
+
+  Future<Response> getCurrentRideCarpool(
+      {bool fromRefresh = false,
+      bool navigateToMap = true,
+      String type = ''}) async {
+    Response response = await rideServiceInterface.currentRideStatus("carpool");
+    print(" carpool======  ${response.body['data']}");
+
+    if (response.statusCode == 200 && response.body['data'] != null) {
+      carpoolTripDetails = TripDetailsModel.fromJson(response.body).data!;
+      estimatedDistance = carpoolTripDetails!.estimatedDistance!.toString();
+      encodedPolyLine = carpoolTripDetails!.encodedPolyline ?? '';
+    } else if (response.statusCode == 403) {
+      rideDetails = null;
+    }
+    update();
+    return response;
+  }
+
   Future<Response> getCurrentRide(
       {bool fromRefresh = false,
       bool navigateToMap = true,
@@ -535,20 +653,35 @@ class RideController extends GetxController implements GetxService {
     return response;
   }
 
-  Future<Response> getCurrentRideCarpool(
-      {bool fromRefresh = false,
-      bool navigateToMap = true,
-      String type = ''}) async {
-    Response response = await rideServiceInterface.currentRideStatus("carpool");
-    print(" carpool======  ${response.body['data']}");
+  Future<Response> remainingDistanceCarpool(String requestID,
+      {bool mapBound = false}) async {
+    isLoading = true;
+    Response response = await rideServiceInterface.remainDistance(requestID);
+    if (response.statusCode == 200) {
+      Get.find<MapController>().getDriverToPickupOrDestinationPolyline(
+          response.body[0]["encoded_polyline"],
+          mapBound: mapBound);
+      remainingDistanceModel = [];
+      for (var distance in response.body) {
+        remainingDistanceModel.add(RemainingDistanceModel.fromJson(distance));
+      }
 
-    if (response.statusCode == 200 && response.body['data'] != null) {
-      tripDetails =
-          rideDetails = TripDetailsModel.fromJson(response.body).data!;
-      estimatedDistance = rideDetails!.estimatedDistance!.toString();
-      encodedPolyLine = rideDetails!.encodedPolyline ?? '';
-    } else if (response.statusCode == 403) {
-      rideDetails = null;
+      if (Get.find<MapController>().isInside &&
+          carpoolTripDetails != null &&
+          currentRideState == RideState.acceptingRider) {
+        currentRideState = RideState.otpSent;
+      }
+      if (Get.find<MapController>().isInside &&
+          Get.find<ParcelController>().currentParcelState ==
+              ParcelDeliveryState.acceptRider) {
+        Get.find<ParcelController>()
+            .updateParcelState(ParcelDeliveryState.otpSent);
+      }
+      arrivalPickupPoint(carpoolTripDetails!.id!);
+      isLoading = false;
+    } else {
+      isLoading = false;
+      ApiChecker.checkApi(response);
     }
     update();
     return response;
@@ -652,6 +785,11 @@ class RideController extends GetxController implements GetxService {
       Get.find<RideController>().remainingDistance(
           Get.find<RideController>().tripDetails!.id!,
           mapBound: true);
+    } else if (Get.find<RideController>().carpoolTripDetails != null &&
+        Get.find<AuthController>().getUserToken() != '') {
+      Get.find<RideController>().remainingDistanceCarpool(
+          Get.find<RideController>().carpoolTripDetails!.id!,
+          mapBound: true);
     } else {
       _timer?.cancel();
     }
@@ -665,6 +803,14 @@ class RideController extends GetxController implements GetxService {
                   'ongoing')) {
         Get.find<RideController>()
             .remainingDistance(Get.find<RideController>().tripDetails!.id!);
+      } else if (Get.find<RideController>().carpoolTripDetails != null &&
+          Get.find<AuthController>().getUserToken() != '' &&
+          (Get.find<RideController>().carpoolTripDetails?.currentStatus ==
+                  'accepted' ||
+              Get.find<RideController>().carpoolTripDetails?.currentStatus ==
+                  'ongoing')) {
+        Get.find<RideController>().remainingDistance(
+            Get.find<RideController>().carpoolTripDetails!.id!);
       } else {
         _timer?.cancel();
       }

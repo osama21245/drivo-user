@@ -55,6 +55,7 @@ class _HomeScreenState extends State<HomeScreen> {
   }
 
   bool clickedMenu = false;
+  bool carpoolClickedMenu = false;
   final DraggableScrollableController _sheetController =
       DraggableScrollableController();
 
@@ -206,6 +207,25 @@ class _HomeScreenState extends State<HomeScreen> {
                       (rideController.rideDetails!.currentStatus ==
                               'cancelled' &&
                           rideController.rideDetails!.paymentStatus! ==
+                              'unpaid')))
+              ? 1
+              : 0;
+
+          int carpoolRideCount = (rideController.carpoolTripDetails != null &&
+                  // rideController.rideDetails!.type == 'ride_request' &&
+                  (rideController.carpoolTripDetails!.currentStatus ==
+                          'pending' ||
+                      rideController.carpoolTripDetails!.currentStatus ==
+                          'accepted' ||
+                      rideController.carpoolTripDetails!.currentStatus ==
+                          'ongoing' ||
+                      (rideController.carpoolTripDetails!.currentStatus ==
+                              'completed' &&
+                          rideController.carpoolTripDetails!.paymentStatus! ==
+                              'unpaid') ||
+                      (rideController.carpoolTripDetails!.currentStatus ==
+                              'cancelled' &&
+                          rideController.carpoolTripDetails!.paymentStatus! ==
                               'unpaid')))
               ? 1
               : 0;
@@ -512,6 +532,170 @@ class _HomeScreenState extends State<HomeScreen> {
                 ),
               ),
             )),
+
+            Positioned(
+                child: Align(
+              alignment: Alignment.centerRight,
+              child: Padding(
+                padding: EdgeInsets.only(top: Get.height * 0.33),
+                child: GestureDetector(
+                  onTap: () {
+                    setState(() {
+                      carpoolClickedMenu = true;
+                    });
+                  },
+                  onHorizontalDragEnd: (DragEndDetails details) {
+                    _onHorizontalDrag(details);
+                  },
+                  child: Stack(children: [
+                    SizedBox(
+                      width: 70,
+                      child: Image.asset(
+                        Images.homeMapIcon,
+                        color: Theme.of(context).primaryColor,
+                      ),
+                    ),
+                    Positioned(
+                      top: 0,
+                      bottom: 15,
+                      left: 35,
+                      right: 0,
+                      child: SizedBox(
+                          height: 10,
+                          child: Image.asset(Images.ongoing, scale: 2.7)),
+                    ),
+                    Positioned(
+                      bottom: 85,
+                      right: 5,
+                      child: Container(
+                        width: 20,
+                        height: 20,
+                        padding: const EdgeInsets.all(3),
+                        decoration: BoxDecoration(
+                          color: Theme.of(context)
+                              .buttonTheme
+                              .colorScheme!
+                              .primary,
+                          borderRadius: BorderRadius.circular(50),
+                        ),
+                        child: Center(
+                            child: Text(
+                          '${carpoolRideCount}',
+                          style: textRegular.copyWith(
+                            color: Colors.white,
+                            fontSize: Dimensions.fontSizeExtraSmall,
+                          ),
+                        )),
+                      ),
+                    )
+                  ]),
+                ),
+              ),
+            )),
+            if (carpoolClickedMenu)
+              Positioned(
+                  child: Align(
+                alignment: Alignment.centerRight,
+                child: Padding(
+                  padding: EdgeInsets.only(top: Get.height * 0.33),
+                  child: GetBuilder<RideController>(builder: (rideController) {
+                    return GetBuilder<ParcelController>(
+                        builder: (parcelController) {
+                      return Container(
+                        width: 220,
+                        height: 70,
+                        decoration: BoxDecoration(
+                          boxShadow: [
+                            BoxShadow(
+                              color:
+                                  Theme.of(context).hintColor.withOpacity(.5),
+                              blurRadius: 1,
+                              spreadRadius: 1,
+                              offset: const Offset(1, 1),
+                            )
+                          ],
+                          borderRadius: const BorderRadius.horizontal(
+                              left: Radius.circular(10)),
+                          color: Theme.of(context).cardColor,
+                        ),
+                        child: Row(children: [
+                          InkWell(
+                            onTap: () {
+                              setState(() {
+                                carpoolClickedMenu = false;
+                              });
+                            },
+                            child: Padding(
+                              padding: const EdgeInsets.all(
+                                  Dimensions.paddingSizeSmall),
+                              child: Icon(
+                                Icons.arrow_forward_ios_rounded,
+                                color: Theme.of(context).hintColor,
+                                size: Dimensions.iconSizeMedium,
+                              ),
+                            ),
+                          ),
+                          Column(children: [
+                            Padding(
+                              padding: const EdgeInsets.symmetric(
+                                  vertical: Dimensions.paddingSizeDefault),
+                              child: InkWell(
+                                onTap: () async {
+                                  await rideController
+                                      .getCurrentCarpoolRideStatus(
+                                          fromRefresh: true);
+                                  setState(() {
+                                    carpoolClickedMenu = false;
+                                  });
+                                },
+                                child: Container(
+                                  width: 150,
+                                  decoration: BoxDecoration(
+                                    border: Border.all(
+                                      color: Theme.of(context)
+                                          .primaryColor
+                                          .withOpacity(.5),
+                                    ),
+                                    borderRadius: BorderRadius.circular(10),
+                                    color: Theme.of(context)
+                                        .primaryColor
+                                        .withOpacity(.125),
+                                  ),
+                                  child: Padding(
+                                    padding: const EdgeInsets.all(8.0),
+                                    child: Row(
+                                      mainAxisAlignment:
+                                          MainAxisAlignment.spaceBetween,
+                                      children: [
+                                        Text('ongoing_ride'.tr),
+                                        CircleAvatar(
+                                          radius: 10,
+                                          backgroundColor: Theme.of(context)
+                                              .colorScheme
+                                              .error,
+                                          child: Text(
+                                            '$carpoolRideCount',
+                                            style: textRegular.copyWith(
+                                              color:
+                                                  Theme.of(context).cardColor,
+                                              fontSize:
+                                                  Dimensions.fontSizeSmall,
+                                            ),
+                                          ),
+                                        )
+                                      ],
+                                    ),
+                                  ),
+                                ),
+                              ),
+                            ),
+                          ]),
+                        ]),
+                      );
+                    });
+                  }),
+                ),
+              )),
             // Clicked menu overlay
             if (clickedMenu)
               Positioned(
