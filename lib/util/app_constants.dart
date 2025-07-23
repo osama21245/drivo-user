@@ -5,8 +5,9 @@ import 'package:ride_sharing_user_app/util/images.dart';
 
 class AppConstants {
   static const String appName = 'Drivo';
-  static const String baseUrl = 'http://192.168.0.114:8000';
-  //'https://drivoeg.com'; /* 'https://drivemond-admin.codemond.com'; */
+  static const String baseUrl =
+      //'http://192.168.0.114:8000';
+      'https://drivoeg.com'; /* 'https://drivemond-admin.codemond.com'; */
   static const double appVersion = 2.1;
   static const String mapKey = "AIzaSyCeF4BHLDezqD1pH7mlzxEchtX962QU9Os";
 

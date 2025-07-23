@@ -159,12 +159,17 @@ class MapController extends GetxController implements GetxService {
       blendMode: BlendMode.srcATop,
     );
 
+    // Check if we have trip details (regular or carpool)
+    final rideController = Get.find<RideController>();
+    final tripDetails =
+        rideController.tripDetails ?? rideController.carpoolTripDetails;
+
     markers.add(Marker(
       markerId: const MarkerId('from'),
       position: from,
       anchor: const Offset(0.4, 0.7),
       infoWindow: InfoWindow(
-        title: Get.find<RideController>().tripDetails?.pickupAddress ?? '',
+        title: tripDetails?.pickupAddress ?? '',
         snippet: 'pick_up_location'.tr,
       ),
       icon: BitmapDescriptor.fromBytes(fromMarker),
@@ -175,7 +180,7 @@ class MapController extends GetxController implements GetxService {
       position: to,
       anchor: const Offset(0.4, 0.8),
       infoWindow: InfoWindow(
-        title: Get.find<RideController>().tripDetails?.destinationAddress ?? '',
+        title: tripDetails?.destinationAddress ?? '',
         snippet: 'destination'.tr,
       ),
       icon: BitmapDescriptor.fromBytes(
@@ -227,8 +232,12 @@ class MapController extends GetxController implements GetxService {
       blendMode: BlendMode.srcATop,
     );
 
-    if (Get.find<RideController>().tripDetails != null &&
-        _polylineCoordinateList.isNotEmpty) {
+    // Check if we have trip details (regular or carpool)
+    final rideController = Get.find<RideController>();
+    final tripDetails =
+        rideController.tripDetails ?? rideController.carpoolTripDetails;
+
+    if (tripDetails != null && _polylineCoordinateList.isNotEmpty) {
       markers.add(Marker(
         markerId: const MarkerId('my_location'),
         position: latLng ?? _polylineCoordinateList.first,
@@ -422,18 +431,22 @@ class MapController extends GetxController implements GetxService {
   void updateDriverMarker(List<LatLng> latLngList) async {
     markers.removeWhere((marker) => marker.markerId.value == "driverPosition");
 
-    // Apply black blend mode to driver vehicle icon
-    Uint8List car = await convertAssetToUnit8List(
-      Get.find<RideController>().tripDetails!.vehicleCategory!.type == 'car'
-          ? Images.carTop
-          : Images.bike,
-      width: 55,
-      blendColor: Colors.black,
-      blendMode: BlendMode.srcATop,
-    );
+    // Check if we have trip details (regular or carpool)
+    final rideController = Get.find<RideController>();
+    final tripDetails =
+        rideController.tripDetails ?? rideController.carpoolTripDetails;
 
-    if (Get.find<RideController>().tripDetails != null &&
-        latLngList.isNotEmpty) {
+    if (tripDetails != null && latLngList.isNotEmpty) {
+      // Apply black blend mode to driver vehicle icon
+      Uint8List car = await convertAssetToUnit8List(
+        tripDetails.vehicleCategory?.type == 'car'
+            ? Images.carTop
+            : Images.bike,
+        width: 55,
+        blendColor: Colors.black,
+        blendMode: BlendMode.srcATop,
+      );
+
       markers.add(Marker(
         markerId: const MarkerId('driverPosition'),
         position: latLngList.first,
@@ -470,9 +483,11 @@ class MapController extends GetxController implements GetxService {
   }
 
   void setMarkersInitialPosition() {
-    if (Get.find<RideController>().encodedPolyLine.isNotEmpty) {
-      List<LatLng> markers =
-          decodeEncodedPolyline(Get.find<RideController>().encodedPolyLine);
+    final rideController = Get.find<RideController>();
+    final encodedPolyLine = rideController.encodedPolyLine;
+
+    if (encodedPolyLine.isNotEmpty) {
+      List<LatLng> markers = decodeEncodedPolyline(encodedPolyLine);
       setFromToMarker(
           LatLng(markers[0].latitude, markers[0].longitude),
           LatLng(markers[markers.length - 1].latitude,

@@ -36,12 +36,14 @@ class SplashScreen extends StatefulWidget {
 }
 
 class _SplashScreenState extends State<SplashScreen>
-    with SingleTickerProviderStateMixin {
+    with TickerProviderStateMixin {
   StreamSubscription<List<ConnectivityResult>>? _onConnectivityChanged;
   final AppLinks _appLinks = AppLinks();
   StreamSubscription? _sub;
   late AnimationController _controller;
   late Animation _animation;
+  late AnimationController _textController;
+  late Animation _textAnimation;
 
   @override
   void initState() {
@@ -54,8 +56,23 @@ class _SplashScreenState extends State<SplashScreen>
         setState(() {});
       });
 
+    _textController = AnimationController(
+        vsync: this, duration: const Duration(milliseconds: 800));
+    _textAnimation = Tween(begin: -200.0, end: 0.0).animate(CurvedAnimation(
+      parent: _textController,
+      curve: Curves.easeOutCubic,
+    ))
+      ..addListener(() {
+        setState(() {});
+      });
+
     _controller.repeat(max: 1);
     _controller.forward();
+
+    // Start text animation after a small delay
+    Future.delayed(const Duration(milliseconds: 300), () {
+      _textController.forward();
+    });
 
     Get.find<ConfigController>().initSharedData();
 
@@ -160,7 +177,7 @@ class _SplashScreenState extends State<SplashScreen>
       PusherHelper.initializePusher();
     }
 
-    Future.delayed(const Duration(milliseconds: 100), () {
+    Future.delayed(const Duration(seconds: 2), () {
       if (Get.find<AuthController>().isLoggedIn()) {
         forLoginUserRoute();
       } else {
@@ -219,6 +236,7 @@ class _SplashScreenState extends State<SplashScreen>
   @override
   void dispose() {
     _controller.dispose();
+    _textController.dispose();
     _onConnectivityChanged?.cancel();
     super.dispose();
   }
@@ -226,8 +244,9 @@ class _SplashScreenState extends State<SplashScreen>
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: Colors.black,
       body: Container(
-        decoration: BoxDecoration(color: Theme.of(context).primaryColor),
+        decoration: BoxDecoration(color: Colors.black),
         alignment: Alignment.bottomCenter,
         child: Column(mainAxisAlignment: MainAxisAlignment.center, children: [
           Stack(alignment: AlignmentDirectional.bottomCenter, children: [
@@ -248,14 +267,18 @@ class _SplashScreenState extends State<SplashScreen>
                           : Image.asset(Images.logoWithNameBlack, width: 160),
                     ),
                     const SizedBox(height: 20),
-                    Opacity(
-                        opacity: _animation.value,
-                        child: Text(
-                          'International standards , local vibes',
-                          style: textBold.copyWith(
-                              fontSize: 11,
-                              color: const Color.fromARGB(198, 255, 255, 255)),
-                        )),
+                    Transform.translate(
+                      offset: Offset(_textAnimation.value, 0),
+                      child: Opacity(
+                          opacity: _animation.value,
+                          child: Text(
+                            'International standards , local vibes',
+                            style: textBold.copyWith(
+                                fontSize: 11,
+                                color:
+                                    const Color.fromARGB(198, 255, 255, 255)),
+                          )),
+                    ),
                     const SizedBox(height: 50),
                     // Image.asset(Images.splashBackgroundOne,
                     //     width: Get.width,

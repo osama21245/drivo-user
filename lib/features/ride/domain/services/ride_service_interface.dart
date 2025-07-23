@@ -65,6 +65,7 @@ abstract class RideServiceInterface {
     double? returnFee,
     double? cancellationFee,
     int? carpollRouteId,
+    bool? isCarpool,
   });
 
   Future<dynamic> carpoolSubmitRideRequest({
@@ -74,6 +75,7 @@ abstract class RideServiceInterface {
     required double pickupLng,
     required double destinationLat,
     required double destinationLng,
+    required bool isCarpool,
   });
 
   Future<dynamic> getRideDetails(String tripId);

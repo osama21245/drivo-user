@@ -266,6 +266,7 @@ class CarPollRideController extends GetxController implements GetxService {
       pickupLng: pickupLng,
       destinationLat: destinationLat,
       destinationLng: destinationLng,
+      isCarpool: true,
     );
     return response;
   }

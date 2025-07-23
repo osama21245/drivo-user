@@ -27,6 +27,9 @@ import 'package:ride_sharing_user_app/features/location/view/access_location_scr
 import 'package:ride_sharing_user_app/features/map/controllers/map_controller.dart';
 import 'package:ride_sharing_user_app/features/parcel/controllers/parcel_controller.dart';
 import 'package:ride_sharing_user_app/features/payment/controllers/payment_controller.dart';
+import 'package:ride_sharing_user_app/features/pool_stop_pickup/domain/services/pool_service.dart';
+import 'package:ride_sharing_user_app/features/pool_stop_pickup/domain/models/find_match_request.dart';
+import 'package:ride_sharing_user_app/features/pool_stop_pickup/domain/models/find_match_response.dart';
 
 enum RideState {
   initial,
@@ -43,7 +46,9 @@ enum RideType { car, bike, parcel, luxury }
 
 class RideController extends GetxController implements GetxService {
   final RideServiceInterface rideServiceInterface;
-  RideController({required this.rideServiceInterface});
+  final PoolService poolService;
+  RideController(
+      {required this.rideServiceInterface, required this.poolService});
 
   RideState currentRideState = RideState.initial;
   RideType selectedCategory = RideType.car;
@@ -76,6 +81,21 @@ class RideController extends GetxController implements GetxService {
 
   TripDetails? get currentTripDetails => tripDetails;
   TripDetails? get currentCarpoolTripDetails => carpoolTripDetails;
+
+  // Carpool properties
+  Address? pickupAddress;
+  Address? destinationAddress;
+  String selectedDate = '';
+  String selectedGender = 'both';
+  int selectedSeats = 1;
+  String selectedRideType = 'work';
+  bool _isSearchingTrips = false;
+  List<dynamic> availableTrips = [];
+  String? carpollRouteId;
+  bool _isCarpoolInitialized = false;
+
+  bool get isSearchingTrips => _isSearchingTrips;
+  bool get isCarpoolInitialized => _isCarpoolInitialized;
 
   TextEditingController inputFarePriceController =
       TextEditingController(text: '0.00');
@@ -255,7 +275,7 @@ class RideController extends GetxController implements GetxService {
   }
 
   Future<Response> submitRideRequest(String note, bool parcel,
-      {String categoryId = ''}) async {
+      {bool isCarpool = false, String categoryId = ''}) async {
     initCountingTimeStates();
     isSubmit = true;
     update();
@@ -279,7 +299,11 @@ class RideController extends GetxController implements GetxService {
       destinationLng: destinationPosition.longitude.toString(),
       customerCurrentLat: locController.initialPosition.latitude.toString(),
       customerCurrentLng: locController.initialPosition.longitude.toString(),
-      type: parcel ? 'parcel' : 'ride_request',
+      type: parcel
+          ? 'parcel'
+          : isCarpool
+              ? 'carpool'
+              : 'ride_request',
       pickupAddress: parcel
           ? Get.find<ParcelController>().senderAddressController.text
           : tripDetails == null
@@ -378,6 +402,8 @@ class RideController extends GetxController implements GetxService {
       zoneId: parcel
           ? parcelEstimatedFare?.data?.zoneId ?? ''
           : selectedType?.zoneId,
+      isCarpool: isCarpool,
+      carpollRouteId: isCarpool ? int.parse(carpollRouteId!) : null,
     );
 
     if (response.statusCode == 200 && response.body['data'] != null) {
@@ -385,6 +411,7 @@ class RideController extends GetxController implements GetxService {
       tripDetails = TripDetailsModel.fromJson(response.body).data!;
       tripDetails!.id = response.body['data']['id'];
       encodedPolyLine = tripDetails!.encodedPolyline!;
+
       if (encodedPolyLine != '' && encodedPolyLine.isNotEmpty) {
         //  Get.find<MapController>().getPolyline();
       }
@@ -407,6 +434,9 @@ class RideController extends GetxController implements GetxService {
     actualFare = 0;
     isLoading = false;
     update();
+    if (isCarpool) {
+      Get.offAll(() => const DashboardScreen());
+    }
 
     return response;
   }
@@ -455,6 +485,72 @@ class RideController extends GetxController implements GetxService {
 
     update();
     return response;
+  }
+
+  Future<void> searchAvailableTrips() async {
+    Get.find<LocationController>().fromAddress;
+    Get.find<LocationController>().toAddress;
+
+    if (pickupAddress == null || destinationAddress == null) {
+      Get.snackbar(
+          'Error', 'Please select both pickup and destination locations');
+      return;
+    }
+
+    if (selectedDate.isEmpty) {
+      Get.snackbar('Error', 'Please select a date');
+      return;
+    }
+
+    _isSearchingTrips = true;
+    update();
+
+    try {
+      // Create the request object
+      FindMatchRequest request = FindMatchRequest(
+        pickupLat: pickupAddress!.latitude!,
+        pickupLng: pickupAddress!.longitude!,
+        dropoffLat: destinationAddress!.latitude!,
+        dropoffLng: destinationAddress!.longitude!,
+        day: selectedDate,
+        gender: selectedGender,
+        seatsRequired: selectedSeats,
+        rideType: selectedRideType,
+      );
+
+      // Make the API call
+      FindMatchResponse? response =
+          await poolService.findMatchingRides(request);
+
+      // Process the response
+      if (response != null && response.responseCode == 'default_200') {
+        // Clear previous results
+        availableTrips.clear();
+
+        // Add new results
+        availableTrips.addAll(response.data);
+
+        // Update UI
+        update();
+
+        if (availableTrips.isEmpty) {
+          Get.snackbar('No Rides Found', 'Try different route or date');
+        } else {
+          print('Found ${availableTrips.length} rides successfully');
+        }
+      } else {
+        availableTrips.clear();
+        Get.snackbar(
+            'Error', response?.message ?? 'Failed to search for trips');
+      }
+    } catch (e) {
+      availableTrips.clear();
+      Get.snackbar(
+          'Error', 'Failed to search for hihuhihstrips: ${e.toString()}');
+    } finally {
+      _isSearchingTrips = false;
+      update();
+    }
   }
 
   bool runningTrip = false;
@@ -627,9 +723,10 @@ class RideController extends GetxController implements GetxService {
       carpoolTripDetails = TripDetailsModel.fromJson(response.body).data!;
       estimatedDistance = carpoolTripDetails!.estimatedDistance!.toString();
       encodedPolyLine = carpoolTripDetails!.encodedPolyline ?? '';
-    } else if (response.statusCode == 403) {
-      rideDetails = null;
     }
+    // else if (response.statusCode == 403) {
+    //   rideDetails = null;
+    // }
     update();
     return response;
   }
@@ -711,7 +808,9 @@ class RideController extends GetxController implements GetxService {
         Get.find<ParcelController>()
             .updateParcelState(ParcelDeliveryState.otpSent);
       }
-      arrivalPickupPoint(tripDetails!.id!);
+      if (tripDetails != null) {
+        arrivalPickupPoint(tripDetails!.id!);
+      }
       isLoading = false;
     } else {
       isLoading = false;
@@ -809,7 +908,7 @@ class RideController extends GetxController implements GetxService {
                   'accepted' ||
               Get.find<RideController>().carpoolTripDetails?.currentStatus ==
                   'ongoing')) {
-        Get.find<RideController>().remainingDistance(
+        Get.find<RideController>().remainingDistanceCarpool(
             Get.find<RideController>().carpoolTripDetails!.id!);
       } else {
         _timer?.cancel();
@@ -833,7 +932,9 @@ class RideController extends GetxController implements GetxService {
       Get.back();
       getRideDetails(tripId).then((value) {
         if (value.statusCode == 200) {
-          remainingDistance(tripDetails!.id!, mapBound: true);
+          if (tripDetails != null) {
+            remainingDistance(tripDetails!.id!, mapBound: true);
+          }
           updateRideCurrentState(RideState.otpSent);
           Get.find<MapController>().notifyMapController();
           Get.offAll(() => const MapScreen(fromScreen: MapScreenType.ride));
@@ -1035,6 +1136,120 @@ class RideController extends GetxController implements GetxService {
     isLoading = false;
     update();
     return response;
+  }
+
+  // Carpool methods
+  void setCarpoolAddresses(Address pickup, Address destination) {
+    pickupAddress = pickup;
+    destinationAddress = destination;
+    update();
+  }
+
+  void setCarpoolSearchParameters({
+    String? date,
+    String? gender,
+    int? seats,
+    String? rideType,
+  }) {
+    if (date != null) selectedDate = date;
+    if (gender != null) selectedGender = gender;
+    if (seats != null) selectedSeats = seats;
+    if (rideType != null) selectedRideType = rideType;
+    update();
+  }
+
+  void selectCarpoolTrip(dynamic trip) async {
+    carpollRouteId = trip.routeId.toString();
+    isLoading = true;
+
+    update();
+    await submitRideRequest('', false, isCarpool: true);
+    isLoading = false;
+    update();
+  }
+
+  void clearCarpoolData() {
+    pickupAddress = null;
+    destinationAddress = null;
+    selectedDate = '';
+    selectedGender = 'both';
+    selectedSeats = 1;
+    selectedRideType = 'work';
+    availableTrips.clear();
+    carpollRouteId = null;
+    _isSearchingTrips = false;
+    _isCarpoolInitialized = false;
+    update();
+  }
+
+  void initializeCarpoolFromLocationController() {
+    // Prevent multiple initializations
+    if (_isCarpoolInitialized) {
+      print('Carpool already initialized, skipping...');
+      return;
+    }
+
+    LocationController locationController = Get.find<LocationController>();
+
+    print('=== Initializing Carpool from LocationController ===');
+    print(
+        'LocationController fromAddress: ${locationController.fromAddress?.address}');
+    print(
+        'LocationController toAddress: ${locationController.toAddress?.address}');
+
+    // Set pickup address from location controller
+    if (locationController.fromAddress != null) {
+      pickupAddress = locationController.fromAddress;
+      print('Pickup address set: ${pickupAddress?.address}');
+    } else {
+      print('WARNING: fromAddress is null in LocationController');
+    }
+
+    // Set destination address from location controller
+    if (locationController.toAddress != null) {
+      destinationAddress = locationController.toAddress;
+      print('Destination address set: ${destinationAddress?.address}');
+    } else {
+      print('WARNING: toAddress is null in LocationController');
+    }
+
+    // Mark as initialized
+    _isCarpoolInitialized = true;
+
+    print('Final carpool state:');
+    print('- Pickup: ${pickupAddress?.address}');
+    print('- Destination: ${destinationAddress?.address}');
+    print('- PoolService available: ${poolService != null}');
+    print('=== End Carpool Initialization ===');
+
+    update();
+  }
+
+  void setSearchingTrips(bool searching) {
+    _isSearchingTrips = searching;
+    update();
+  }
+
+  void debugCarpoolState() {
+    LocationController locationController = Get.find<LocationController>();
+
+    print('=== Carpool Debug State ===');
+    print('RideController State:');
+    print('- Pickup Address: ${pickupAddress?.address}');
+    print('- Destination Address: ${destinationAddress?.address}');
+    print('- Selected Date: $selectedDate');
+    print('- Selected Gender: $selectedGender');
+    print('- Selected Seats: $selectedSeats');
+    print('- Selected Ride Type: $selectedRideType');
+    print('- Available Trips: ${availableTrips.length}');
+    print('- Is Searching: $_isSearchingTrips');
+    print('- Carpool Route ID: $carpollRouteId');
+    print('- PoolService: ${poolService != null}');
+
+    print('\nLocationController State:');
+    print('- fromAddress: ${locationController.fromAddress?.address}');
+    print('- toAddress: ${locationController.toAddress?.address}');
+    print('==========================');
   }
 }
 

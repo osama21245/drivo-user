@@ -20,7 +20,7 @@ import 'package:ride_sharing_user_app/common_widgets/app_bar_widget.dart';
 import 'package:ride_sharing_user_app/common_widgets/body_widget.dart';
 import 'package:ride_sharing_user_app/common_widgets/button_widget.dart';
 
-enum MapScreenType { ride, splash, parcel, location }
+enum MapScreenType { ride, splash, parcel, location, carpool }
 
 class MapScreen extends StatefulWidget {
   final MapScreenType fromScreen;
@@ -331,13 +331,18 @@ class _MapScreenState extends State<MapScreen> with WidgetsBindingObserver {
                               expandableKey: key);
                         })
                       : (widget.fromScreen == MapScreenType.ride ||
-                              widget.fromScreen == MapScreenType.splash)
+                              widget.fromScreen == MapScreenType.splash ||
+                              widget.fromScreen == MapScreenType.carpool)
                           ? GetBuilder<RideController>(
                               builder: (rideController) {
                               return RideExpendableBottomSheet(
+                                  isCarpool: widget.fromScreen ==
+                                      MapScreenType.carpool,
                                   expandableKey: key);
                             })
-                          : const SizedBox(),
+                          : const Center(
+                              child: Text('No data found'),
+                            ),
                   SizedBox(height: MediaQuery.of(context).viewInsets.bottom),
                 ]),
               );

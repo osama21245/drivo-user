@@ -142,6 +142,7 @@ class RideService implements RideServiceInterface {
     double? cancellationFee,
     String? zoneId,
     int? carpollRouteId,
+    bool? isCarpool,
   }) async {
     return await rideRepositoryInterface.submitRideRequest(
       pickupLat: pickupLat,
@@ -175,6 +176,8 @@ class RideService implements RideServiceInterface {
       extraFareAmount: extraFareAmount,
       extraFareFee: extraFareFee,
       zoneId: zoneId,
+      isCarpool: isCarpool,
+      carpollRouteId: carpollRouteId,
     );
   }
 
@@ -186,14 +189,17 @@ class RideService implements RideServiceInterface {
     required double pickupLng,
     required double destinationLat,
     required double destinationLng,
+    required bool isCarpool,
   }) async {
     return await rideRepositoryInterface.carpoolSubmitRideRequest(
-        carpollRouteId: carpollRouteId,
-        price: price,
-        pickupLat: pickupLat,
-        pickupLng: pickupLng,
-        destinationLat: destinationLat,
-        destinationLng: destinationLng);
+      carpollRouteId: carpollRouteId,
+      price: price,
+      pickupLat: pickupLat,
+      pickupLng: pickupLng,
+      destinationLat: destinationLat,
+      destinationLng: destinationLng,
+      isCarpool: isCarpool,
+    );
   }
 
   @override

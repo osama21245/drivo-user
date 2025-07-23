@@ -182,7 +182,8 @@ Future<Map<String, Map<String, String>>> init() async {
   Get.lazyPut(() => AddressController(addressServiceInterface: Get.find()));
   Get.lazyPut(() => MapController());
   Get.lazyPut(() => ParcelController(parcelServiceInterface: Get.find()));
-  Get.lazyPut(() => RideController(rideServiceInterface: Get.find()));
+  Get.lazyPut(() => RideController(
+      rideServiceInterface: Get.find(), poolService: Get.find()));
   Get.lazyPut(() => PaymentController(paymentServiceInterface: Get.find()));
   Get.lazyPut(() => LocationController(locationServiceInterface: Get.find()));
   Get.lazyPut(() => BottomMenuController());

@@ -15,6 +15,8 @@ import 'package:ride_sharing_user_app/util/dimensions.dart';
 import 'package:ride_sharing_user_app/util/images.dart';
 import 'package:ride_sharing_user_app/util/styles.dart';
 
+import '../../pool_stop_pickup/screens/set_destination_carpool_screen.dart';
+
 class DashboardScreen extends StatefulWidget {
   const DashboardScreen({super.key});
 
@@ -42,7 +44,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
           name: "Trips",
           activeIcon: Images.carTripeIcon,
           inactiveIcon: Images.carTripeIcon,
-          screen: WelcomePoolScreen()),
+          screen: SetDestinationCarPoolScreen()),
       NavigationModel(
         name: 'activity'.tr,
         activeIcon: Images.activityActive,

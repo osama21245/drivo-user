@@ -146,7 +146,7 @@
 				24333FC2E0B52B2D365F1280 /* [CP] Embed Pods Frameworks */,
 				F89B2EC857B24D178D5DF323 /* [CP] Copy Pods Resources */,
 				C0D55B5D9CF6EC3FEDFC9CA8 /* [firebase_crashlytics] Crashlytics Upload Symbols */,
-				92E9215C4EE1D3866AABEA92 /* FlutterFire: "flutterfire upload-crashlytics-symbols" */,
+				5FB06DDFE9DDEAE1BCF68DFE /* FlutterFire: "flutterfire upload-crashlytics-symbols" */,
 			);
 			buildRules = (
 			);
@@ -239,7 +239,7 @@
 			shellPath = /bin/sh;
 			shellScript = "/bin/sh \"$FLUTTER_ROOT/packages/flutter_tools/bin/xcode_backend.sh\" embed_and_thin";
 		};
-		92E9215C4EE1D3866AABEA92 /* FlutterFire: "flutterfire upload-crashlytics-symbols" */ = {
+		5FB06DDFE9DDEAE1BCF68DFE /* FlutterFire: "flutterfire upload-crashlytics-symbols" */ = {
 			isa = PBXShellScriptBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
@@ -433,7 +433,7 @@
 					"@executable_path/Frameworks",
 				);
 				MARKETING_VERSION = "$(FLUTTER_BUILD_NAME)";
-				PRODUCT_BUNDLE_IDENTIFIER = com.drivo.hwilouser;
+				PRODUCT_BUNDLE_IDENTIFIER = com.appsaifuser.drivo;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_OBJC_BRIDGING_HEADER = "Runner/Runner-Bridging-Header.h";
 				SWIFT_VERSION = 5.0;
@@ -567,7 +567,7 @@
 					"@executable_path/Frameworks",
 				);
 				MARKETING_VERSION = "$(FLUTTER_BUILD_NAME)";
-				PRODUCT_BUNDLE_IDENTIFIER = com.drivo.hwilouser;
+				PRODUCT_BUNDLE_IDENTIFIER = com.appsaifuser.drivo;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_OBJC_BRIDGING_HEADER = "Runner/Runner-Bridging-Header.h";
 				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
@@ -593,7 +593,7 @@
 					"@executable_path/Frameworks",
 				);
 				MARKETING_VERSION = "$(FLUTTER_BUILD_NAME)";
-				PRODUCT_BUNDLE_IDENTIFIER = com.drivo.hwilouser;
+				PRODUCT_BUNDLE_IDENTIFIER = com.appsaifuser.drivo;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_OBJC_BRIDGING_HEADER = "Runner/Runner-Bridging-Header.h";
 				SWIFT_VERSION = 5.0;

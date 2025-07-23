@@ -256,11 +256,25 @@ class _FindingRiderWidgetState extends State<FindingRiderWidget> {
                             child: ButtonWidget(
                               buttonText: 'cancel_searching'.tr,
                               onPressed: () {
-                                widget.expandableKey.currentState?.contract();
+                                //  widget.expandableKey.currentState?.contract();
+                                print(
+                                    "======== ${rideController.tripDetails?.id}");
+                                print(
+                                    "rideController.carpoolTripDetails?.id: ${rideController.carpoolTripDetails?.id}");
+
+                                // Get the trip ID safely
+                                String? tripId =
+                                    rideController.tripDetails?.id ??
+                                        rideController.carpoolTripDetails?.id;
+
+                                if (tripId == null) {
+                                  Get.snackbar('Error', 'No trip ID found');
+                                  return;
+                                }
 
                                 rideController
                                     .tripStatusUpdate(
-                                  rideController.tripDetails!.id!,
+                                  tripId,
                                   'cancelled',
                                   'ride_request_cancelled_successfully',
                                   '',

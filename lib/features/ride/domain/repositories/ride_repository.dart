@@ -101,6 +101,7 @@ class RideRepository implements RideRepositoryInterface {
     double? returnFee,
     double? cancellationFee,
     int? carpollRouteId,
+    bool? isCarpool,
   }) async {
     return await apiClient.postData(AppConstants.rideRequest, {
       "pickup_coordinates": '[$pickupLat,$pickupLng]',
@@ -172,6 +173,7 @@ class RideRepository implements RideRepositoryInterface {
       'extra_fare_fee': extraFareFee,
       'zone_id': zoneId,
       "carpool_route_id": carpollRouteId,
+      "is_carpool": isCarpool
     });
   }
 
@@ -183,13 +185,14 @@ class RideRepository implements RideRepositoryInterface {
     required double pickupLng,
     required double destinationLat,
     required double destinationLng,
+    required bool isCarpool,
   }) async {
-    return await apiClient.postData(AppConstants.carpoolSubmitRideRequest, {
+    return await apiClient.postData(AppConstants.rideRequest, {
       "carpool_route_id": carpollRouteId,
       "price": price,
       "pickup_coordinates": '[$pickupLat,$pickupLng]',
       "destination_coordinates": '[$destinationLat,$destinationLng]',
-      "min_fare": 5
+      "min_fare": 5,
     });
   }
 

@@ -66,6 +66,7 @@ abstract class RideRepositoryInterface implements RepositoryInterface {
     double? returnFee,
     double? cancellationFee,
     int? carpollRouteId,
+    bool? isCarpool,
   });
 
   Future<dynamic> carpoolSubmitRideRequest({
@@ -75,6 +76,7 @@ abstract class RideRepositoryInterface implements RepositoryInterface {
     required double pickupLng,
     required double destinationLat,
     required double destinationLng,
+    required bool isCarpool,
   });
 
   Future<dynamic> getRideDetails(String tripId);

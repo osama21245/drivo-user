@@ -561,8 +561,10 @@ class _HomeScreenState extends State<HomeScreen> {
                       left: 35,
                       right: 0,
                       child: SizedBox(
-                          height: 10,
-                          child: Image.asset(Images.ongoing, scale: 2.7)),
+                          height: 5, // much smaller height
+                          child: Image.asset(Images.carTop,
+                              scale:
+                                  5.0)), // much higher scale for smaller image
                     ),
                     Positioned(
                       bottom: 85,
