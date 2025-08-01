@@ -53,6 +53,8 @@
 	<string>This app need location permission for tracking driver start to destination trip.</string>
 	<key>NSSpeechRecognitionUsageDescription</key>
 	<string>Permission required to record audio for speech recognition</string>
+	<key>NSLocationAlwaysAndWhenInUseUsageDescription</key>
+    <string>We use your location to improve user experience by showing nearby places and services.</string>
 	<key>UIApplicationSupportsIndirectInputEvents</key>
 	<true/>
 	<key>UIBackgroundModes</key>

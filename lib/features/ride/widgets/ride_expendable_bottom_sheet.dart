@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'dart:math';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:ride_sharing_user_app/common_widgets/expandable_bottom_sheet.dar.dart';
@@ -23,6 +24,8 @@ import 'package:ride_sharing_user_app/features/pool_stop_pickup/domain/models/fi
 import 'package:ride_sharing_user_app/features/pool_stop_pickup/domain/models/find_match_response.dart';
 import 'package:ride_sharing_user_app/features/address/domain/models/address_model.dart';
 import 'package:ride_sharing_user_app/helper/price_converter.dart';
+import 'package:google_maps_flutter/google_maps_flutter.dart';
+import 'package:http/http.dart' as http;
 
 class RideExpendableBottomSheet extends StatefulWidget {
   final GlobalKey<ExpandableBottomSheetState> expandableKey;
@@ -588,52 +591,787 @@ class _RideExpendableBottomSheetState extends State<RideExpendableBottomSheet> {
         color: Colors.white,
         borderRadius: BorderRadius.circular(Dimensions.radiusSmall),
         border: Border.all(color: Colors.grey[300]!),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.grey.withOpacity(0.1),
+            spreadRadius: 1,
+            blurRadius: 3,
+            offset: const Offset(0, 1),
+          ),
+        ],
       ),
-      child: Row(
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Expanded(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(
-                  'Driver: ${trip.driver.fullName ?? 'Unknown'}',
-                  style:
-                      textMedium.copyWith(fontSize: Dimensions.fontSizeSmall),
+          // Header with driver info and price
+          Row(
+            children: [
+              // Driver profile image
+              Container(
+                width: 50,
+                height: 50,
+                decoration: BoxDecoration(
+                  shape: BoxShape.circle,
+                  color: Colors.grey[200],
+                  border: Border.all(
+                      color: Theme.of(context).primaryColor, width: 2),
                 ),
-                const SizedBox(height: 2),
-                Text(
-                  'Price: \$${trip.price.toString()}',
-                  style: textRegular.copyWith(
-                    fontSize: Dimensions.fontSizeSmall,
-                    color: Theme.of(context).primaryColor,
+                child: (trip.driver.profileImage != null &&
+                        trip.driver.profileImage!.isNotEmpty)
+                    ? ClipOval(
+                        child: Image.network(
+                          trip.driver.profileImage!,
+                          fit: BoxFit.cover,
+                          errorBuilder: (context, error, stackTrace) {
+                            return Icon(
+                              Icons.person,
+                              size: 30,
+                              color: Theme.of(context).primaryColor,
+                            );
+                          },
+                        ),
+                      )
+                    : Icon(
+                        Icons.person,
+                        size: 30,
+                        color: Theme.of(context).primaryColor,
+                      ),
+              ),
+              const SizedBox(width: Dimensions.paddingSizeSmall),
+
+              // Driver details
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      trip.driver.fullName.isNotEmpty
+                          ? trip.driver.fullName
+                          : 'Unknown Driver',
+                      style: textBold.copyWith(
+                        fontSize: Dimensions.fontSizeDefault,
+                        color: Colors.black87,
+                      ),
+                    ),
+                    const SizedBox(height: 2),
+                    Row(
+                      children: [
+                        Icon(
+                          Icons.person,
+                          size: 14,
+                          color: Colors.grey[600],
+                        ),
+                        const SizedBox(width: 4),
+                        Text(
+                          trip.driver.gender.isNotEmpty
+                              ? '${trip.driver.gender[0].toUpperCase()}${trip.driver.gender.substring(1)}'
+                              : 'Unknown',
+                          style: textRegular.copyWith(
+                            fontSize: Dimensions.fontSizeSmall,
+                            color: Colors.grey[600],
+                          ),
+                        ),
+                      ],
+                    ),
+                  ],
+                ),
+              ),
+
+              // Price
+              Container(
+                padding: const EdgeInsets.symmetric(
+                  horizontal: Dimensions.paddingSizeSmall,
+                  vertical: Dimensions.paddingSizeExtraSmall,
+                ),
+                decoration: BoxDecoration(
+                  color: Theme.of(context).primaryColor,
+                  borderRadius: BorderRadius.circular(Dimensions.radiusSmall),
+                ),
+                child: Text(
+                  '\$${trip.price.toString()}',
+                  style: textBold.copyWith(
+                    fontSize: Dimensions.fontSizeDefault,
+                    color: Colors.white,
+                  ),
+                ),
+              ),
+            ],
+          ),
+
+          const SizedBox(height: Dimensions.paddingSizeSmall),
+
+          // Vehicle information
+          Container(
+            padding: const EdgeInsets.all(Dimensions.paddingSizeSmall),
+            decoration: BoxDecoration(
+              color: Colors.grey[50],
+              borderRadius: BorderRadius.circular(Dimensions.radiusSmall),
+            ),
+            child: Row(
+              children: [
+                Icon(
+                  Icons.directions_car,
+                  size: 20,
+                  color: Theme.of(context).primaryColor,
+                ),
+                const SizedBox(width: Dimensions.paddingSizeExtraSmall),
+                Expanded(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        '${trip.vehicle.brand.isNotEmpty ? trip.vehicle.brand : 'Unknown'} ${trip.vehicle.model.isNotEmpty ? trip.vehicle.model : 'Vehicle'}',
+                        style: textMedium.copyWith(
+                          fontSize: Dimensions.fontSizeSmall,
+                          color: Colors.black87,
+                        ),
+                      ),
+                      if (trip.vehicle.plateNumber != null &&
+                          trip.vehicle.plateNumber!.isNotEmpty)
+                        Text(
+                          'Plate: ${trip.vehicle.plateNumber}',
+                          style: textRegular.copyWith(
+                            fontSize: Dimensions.fontSizeExtraSmall,
+                            color: Colors.grey[600],
+                          ),
+                        ),
+                    ],
                   ),
                 ),
               ],
             ),
           ),
-          ElevatedButton(
-            onPressed: () => _selectTrip(trip, rideController),
-            style: ElevatedButton.styleFrom(
-              backgroundColor: Theme.of(context).primaryColor,
-              foregroundColor: Colors.white,
-              padding: const EdgeInsets.symmetric(
-                horizontal: Dimensions.paddingSizeSmall,
-                vertical: Dimensions.paddingSizeExtraSmall,
+
+          const SizedBox(height: Dimensions.paddingSizeSmall),
+
+          // Trip details
+          Row(
+            children: [
+              Expanded(
+                child: _buildTripDetailItem(
+                  icon: Icons.access_time,
+                  label: 'Departure',
+                  value: _formatDateTime(trip.startTime),
+                ),
               ),
-              shape: RoundedRectangleBorder(
+              const SizedBox(width: Dimensions.paddingSizeExtraSmall),
+              Expanded(
+                child: _buildTripDetailItem(
+                  icon: Icons.event_seat,
+                  label: 'Available Seats',
+                  value: '${trip.seatsAvailable}',
+                ),
+              ),
+            ],
+          ),
+
+          const SizedBox(height: Dimensions.paddingSizeExtraSmall),
+
+          // Route information
+          Container(
+            padding: const EdgeInsets.all(Dimensions.paddingSizeSmall),
+            decoration: BoxDecoration(
+              color: Colors.blue[50],
+              borderRadius: BorderRadius.circular(Dimensions.radiusSmall),
+              border: Border.all(color: Colors.blue[200]!),
+            ),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Row(
+                  children: [
+                    Icon(
+                      Icons.route,
+                      size: 16,
+                      color: Colors.blue[700],
+                    ),
+                    const SizedBox(width: Dimensions.paddingSizeExtraSmall),
+                    Text(
+                      'Route',
+                      style: textMedium.copyWith(
+                        fontSize: Dimensions.fontSizeSmall,
+                        color: Colors.blue[700],
+                      ),
+                    ),
+                  ],
+                ),
+                const SizedBox(height: Dimensions.paddingSizeExtraSmall),
+
+                // Pickup location
+                Row(
+                  children: [
+                    Container(
+                      width: 8,
+                      height: 8,
+                      decoration: BoxDecoration(
+                        color: Colors.green,
+                        shape: BoxShape.circle,
+                      ),
+                    ),
+                    const SizedBox(width: Dimensions.paddingSizeExtraSmall),
+                    Expanded(
+                      child: Text(
+                        trip.pickupAddress,
+                        style: textRegular.copyWith(
+                          fontSize: Dimensions.fontSizeSmall,
+                          color: Colors.black87,
+                        ),
+                        maxLines: 2,
+                        overflow: TextOverflow.ellipsis,
+                      ),
+                    ),
+                  ],
+                ),
+
+                const SizedBox(height: 4),
+
+                // Destination location
+                Row(
+                  children: [
+                    Container(
+                      width: 8,
+                      height: 8,
+                      decoration: BoxDecoration(
+                        color: Colors.red,
+                        shape: BoxShape.circle,
+                      ),
+                    ),
+                    const SizedBox(width: Dimensions.paddingSizeExtraSmall),
+                    Expanded(
+                      child: Text(
+                        trip.dropoffAddress,
+                        style: textRegular.copyWith(
+                          fontSize: Dimensions.fontSizeSmall,
+                          color: Colors.black87,
+                        ),
+                        maxLines: 2,
+                        overflow: TextOverflow.ellipsis,
+                      ),
+                    ),
+                  ],
+                ),
+              ],
+            ),
+          ),
+
+          const SizedBox(height: Dimensions.paddingSizeSmall),
+
+          // Trip preferences
+          Wrap(
+            spacing: Dimensions.paddingSizeExtraSmall,
+            runSpacing: Dimensions.paddingSizeExtraSmall,
+            children: [
+              if (trip.isAc)
+                _buildPreferenceChip(
+                  icon: Icons.ac_unit,
+                  label: 'AC',
+                  color: Colors.blue,
+                ),
+              if (trip.isSmokingAllowed)
+                _buildPreferenceChip(
+                  icon: Icons.smoking_rooms,
+                  label: 'Smoking Allowed',
+                  color: Colors.orange,
+                ),
+              if (trip.hasMusic)
+                _buildPreferenceChip(
+                  icon: Icons.music_note,
+                  label: 'Music',
+                  color: Colors.purple,
+                ),
+              if (trip.hasScreenEntertainment)
+                _buildPreferenceChip(
+                  icon: Icons.tv,
+                  label: 'Entertainment',
+                  color: Colors.green,
+                ),
+              if (trip.allowLuggage)
+                _buildPreferenceChip(
+                  icon: Icons.work,
+                  label: 'Luggage',
+                  color: Colors.brown,
+                ),
+            ],
+          ),
+
+          const SizedBox(height: Dimensions.paddingSizeSmall),
+
+          // Age and gender restrictions
+          if (trip.allowedGender != 'both' ||
+              trip.allowedAgeMin > 0 ||
+              trip.allowedAgeMax < 100)
+            Container(
+              padding: const EdgeInsets.all(Dimensions.paddingSizeSmall),
+              decoration: BoxDecoration(
+                color: Colors.orange[50],
                 borderRadius: BorderRadius.circular(Dimensions.radiusSmall),
+                border: Border.all(color: Colors.orange[200]!),
+              ),
+              child: Row(
+                children: [
+                  Icon(
+                    Icons.info_outline,
+                    size: 16,
+                    color: Colors.orange[700],
+                  ),
+                  const SizedBox(width: Dimensions.paddingSizeExtraSmall),
+                  Expanded(
+                    child: Text(
+                      _getRestrictionsText(trip),
+                      style: textRegular.copyWith(
+                        fontSize: Dimensions.fontSizeSmall,
+                        color: Colors.orange[700],
+                      ),
+                    ),
+                  ),
+                ],
               ),
             ),
-            child: Text(
-              'Join',
-              style: textMedium.copyWith(
-                fontSize: Dimensions.fontSizeSmall,
-                color: Colors.white,
+
+          const SizedBox(height: Dimensions.paddingSizeSmall),
+
+          // Action buttons
+          Row(
+            children: [
+              Expanded(
+                child: ElevatedButton.icon(
+                  onPressed: () => _showTripRoute(trip),
+                  icon: Icon(
+                    Icons.map,
+                    size: 18,
+                    color: Colors.white,
+                  ),
+                  label: Text(
+                    'View Route',
+                    style: textMedium.copyWith(
+                      fontSize: Dimensions.fontSizeSmall,
+                      color: Colors.white,
+                    ),
+                  ),
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: Colors.blue[600],
+                    foregroundColor: Colors.white,
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: Dimensions.paddingSizeSmall,
+                      vertical: Dimensions.paddingSizeExtraSmall,
+                    ),
+                    shape: RoundedRectangleBorder(
+                      borderRadius:
+                          BorderRadius.circular(Dimensions.radiusSmall),
+                    ),
+                  ),
+                ),
               ),
+              const SizedBox(width: Dimensions.paddingSizeExtraSmall),
+              Expanded(
+                child: ElevatedButton.icon(
+                  onPressed: () => _selectTrip(trip, rideController),
+                  icon: Icon(
+                    Icons.check_circle,
+                    size: 18,
+                    color: Colors.white,
+                  ),
+                  label: Text(
+                    'Join Trip',
+                    style: textMedium.copyWith(
+                      fontSize: Dimensions.fontSizeSmall,
+                      color: Colors.white,
+                    ),
+                  ),
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: Theme.of(context).primaryColor,
+                    foregroundColor: Colors.white,
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: Dimensions.paddingSizeSmall,
+                      vertical: Dimensions.paddingSizeExtraSmall,
+                    ),
+                    shape: RoundedRectangleBorder(
+                      borderRadius:
+                          BorderRadius.circular(Dimensions.radiusSmall),
+                    ),
+                  ),
+                ),
+              ),
+            ],
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildTripDetailItem({
+    required IconData icon,
+    required String label,
+    required String value,
+  }) {
+    return Container(
+      padding: const EdgeInsets.all(Dimensions.paddingSizeSmall),
+      decoration: BoxDecoration(
+        color: Colors.grey[50],
+        borderRadius: BorderRadius.circular(Dimensions.radiusSmall),
+        border: Border.all(color: Colors.grey[300]!),
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Row(
+            children: [
+              Icon(icon, size: 14, color: Colors.grey[600]),
+              const SizedBox(width: 4),
+              Text(
+                label,
+                style: textMedium.copyWith(
+                  fontSize: Dimensions.fontSizeExtraSmall,
+                  color: Colors.grey[600],
+                ),
+              ),
+            ],
+          ),
+          const SizedBox(height: 2),
+          Text(
+            value,
+            style: textRegular.copyWith(
+              fontSize: Dimensions.fontSizeSmall,
+              color: Colors.black87,
             ),
           ),
         ],
       ),
+    );
+  }
+
+  Widget _buildPreferenceChip({
+    required IconData icon,
+    required String label,
+    required Color color,
+  }) {
+    return Container(
+      padding: const EdgeInsets.symmetric(
+        horizontal: Dimensions.paddingSizeExtraSmall,
+        vertical: 4,
+      ),
+      decoration: BoxDecoration(
+        color: color.withOpacity(0.1),
+        borderRadius: BorderRadius.circular(Dimensions.radiusSmall),
+        border: Border.all(color: color.withOpacity(0.3)),
+      ),
+      child: Row(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          Icon(icon, size: 12, color: color),
+          const SizedBox(width: 4),
+          Text(
+            label,
+            style: textRegular.copyWith(
+              fontSize: Dimensions.fontSizeExtraSmall,
+              color: color,
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  String _formatDateTime(String dateTimeString) {
+    try {
+      DateTime dateTime = DateTime.parse(dateTimeString);
+      return '${dateTime.day}/${dateTime.month}/${dateTime.year} ${dateTime.hour}:${dateTime.minute.toString().padLeft(2, '0')}';
+    } catch (e) {
+      return dateTimeString;
+    }
+  }
+
+  String _getRestrictionsText(dynamic trip) {
+    List<String> restrictions = [];
+
+    if (trip.allowedGender != 'both') {
+      String genderText = trip.allowedGender.isNotEmpty
+          ? '${trip.allowedGender[0].toUpperCase()}${trip.allowedGender.substring(1)}'
+          : 'Unknown';
+      restrictions.add('$genderText only');
+    }
+
+    if (trip.allowedAgeMin > 0 || trip.allowedAgeMax < 100) {
+      String ageRange = '';
+      if (trip.allowedAgeMin > 0 && trip.allowedAgeMax < 100) {
+        ageRange = 'Age ${trip.allowedAgeMin}-${trip.allowedAgeMax}';
+      } else if (trip.allowedAgeMin > 0) {
+        ageRange = 'Age ${trip.allowedAgeMin}+';
+      } else if (trip.allowedAgeMax < 100) {
+        ageRange = 'Age under ${trip.allowedAgeMax}';
+      }
+      if (ageRange.isNotEmpty) {
+        restrictions.add(ageRange);
+      }
+    }
+
+    return restrictions.isEmpty ? 'No restrictions' : restrictions.join(', ');
+  }
+
+  void _showTripRoute(dynamic trip) async {
+    // Show loading dialog first
+    showDialog(
+      context: context,
+      barrierDismissible: false,
+      builder: (BuildContext context) {
+        return Dialog(
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(Dimensions.radiusDefault),
+          ),
+          child: Container(
+            padding: const EdgeInsets.all(Dimensions.paddingSizeDefault),
+            child: Row(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                CircularProgressIndicator(
+                  valueColor: AlwaysStoppedAnimation<Color>(
+                    Theme.of(context).primaryColor,
+                  ),
+                ),
+                const SizedBox(width: Dimensions.paddingSizeDefault),
+                Text(
+                  'Loading route...',
+                  style: textMedium.copyWith(
+                    fontSize: Dimensions.fontSizeDefault,
+                  ),
+                ),
+              ],
+            ),
+          ),
+        );
+      },
+    );
+
+    try {
+      // Get the actual route using Google Maps Directions API
+      List<LatLng> routePoints = await _getRoutePolyline(
+        LatLng(trip.dropoffMatchPoint.lat, trip.dropoffMatchPoint.lng),
+        LatLng(trip.pickupMatchPoint.lat, trip.pickupMatchPoint.lng),
+      );
+
+      // Close loading dialog
+      Navigator.of(context).pop();
+
+      // Show route dialog
+      showDialog(
+        context: context,
+        builder: (BuildContext context) {
+          return Dialog(
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(Dimensions.radiusDefault),
+            ),
+            child: Container(
+              height: MediaQuery.of(context).size.height * 0.7,
+              width: MediaQuery.of(context).size.width * 0.9,
+              decoration: BoxDecoration(
+                borderRadius: BorderRadius.circular(Dimensions.radiusDefault),
+              ),
+              child: Column(
+                children: [
+                  // Header
+                  Container(
+                    padding:
+                        const EdgeInsets.all(Dimensions.paddingSizeDefault),
+                    decoration: BoxDecoration(
+                      color: Theme.of(context).primaryColor,
+                      borderRadius: const BorderRadius.only(
+                        topLeft: Radius.circular(Dimensions.radiusDefault),
+                        topRight: Radius.circular(Dimensions.radiusDefault),
+                      ),
+                    ),
+                    child: Row(
+                      children: [
+                        Icon(
+                          Icons.route,
+                          color: Colors.white,
+                          size: 24,
+                        ),
+                        const SizedBox(width: Dimensions.paddingSizeSmall),
+                        Expanded(
+                          child: Text(
+                            'Trip Route',
+                            style: textBold.copyWith(
+                              fontSize: Dimensions.fontSizeLarge,
+                              color: Colors.white,
+                            ),
+                          ),
+                        ),
+                        IconButton(
+                          onPressed: () => Navigator.of(context).pop(),
+                          icon: Icon(
+                            Icons.close,
+                            color: Colors.white,
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+
+                  // Map
+                  Expanded(
+                    child: ClipRRect(
+                      borderRadius: const BorderRadius.only(
+                        bottomLeft: Radius.circular(Dimensions.radiusDefault),
+                        bottomRight: Radius.circular(Dimensions.radiusDefault),
+                      ),
+                      child: GoogleMap(
+                        initialCameraPosition: CameraPosition(
+                          target: LatLng(
+                            (trip.pickupMatchPoint.lat +
+                                    trip.dropoffMatchPoint.lat) /
+                                2,
+                            (trip.pickupMatchPoint.lng +
+                                    trip.dropoffMatchPoint.lng) /
+                                2,
+                          ),
+                          zoom: 12,
+                        ),
+                        markers: {
+                          Marker(
+                            markerId: const MarkerId('pickup'),
+                            position: LatLng(trip.pickupMatchPoint.lat,
+                                trip.pickupMatchPoint.lng),
+                            icon: BitmapDescriptor.defaultMarkerWithHue(
+                                BitmapDescriptor.hueGreen),
+                            infoWindow: InfoWindow(
+                              title: 'Pickup',
+                              snippet: trip.pickupAddress,
+                            ),
+                          ),
+                          Marker(
+                            markerId: const MarkerId('dropoff'),
+                            position: LatLng(trip.dropoffMatchPoint.lat,
+                                trip.dropoffMatchPoint.lng),
+                            icon: BitmapDescriptor.defaultMarkerWithHue(
+                                BitmapDescriptor.hueRed),
+                            infoWindow: InfoWindow(
+                              title: 'Destination',
+                              snippet: trip.dropoffAddress,
+                            ),
+                          ),
+                        },
+                        polylines: {
+                          Polyline(
+                            polylineId: const PolylineId('route'),
+                            points: routePoints,
+                            color: Theme.of(context).primaryColor,
+                            width: 5,
+                          ),
+                        },
+                        zoomControlsEnabled: false,
+                        mapToolbarEnabled: false,
+                        onMapCreated: (GoogleMapController controller) {
+                          // Fit the map to show the entire route
+                          if (routePoints.isNotEmpty) {
+                            controller.animateCamera(
+                              CameraUpdate.newLatLngBounds(
+                                _getBounds(routePoints),
+                                50.0,
+                              ),
+                            );
+                          }
+                        },
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          );
+        },
+      );
+    } catch (e) {
+      // Close loading dialog
+      Navigator.of(context).pop();
+
+      // Show error message
+      Get.snackbar(
+        'Error',
+        'Failed to load route: ${e.toString()}',
+        backgroundColor: Colors.red,
+        colorText: Colors.white,
+      );
+    }
+  }
+
+  Future<List<LatLng>> _getRoutePolyline(
+      LatLng origin, LatLng destination) async {
+    try {
+      // Use Google Maps Directions API to get the actual route
+      final String apiKey =
+          'AIzaSyCeF4BHLDezqD1pH7mlzxEchtX962QU9Os'; // From AppConstants
+      final String url = 'https://maps.googleapis.com/maps/api/directions/json?'
+          'origin=${origin.latitude},${origin.longitude}'
+          '&destination=${destination.latitude},${destination.longitude}'
+          '&key=$apiKey';
+
+      final response = await http.get(Uri.parse(url));
+
+      if (response.statusCode == 200) {
+        final data = jsonDecode(response.body);
+
+        if (data['status'] == 'OK' && data['routes'].isNotEmpty) {
+          final route = data['routes'][0];
+          final polyline = route['overview_polyline']['points'];
+
+          // Decode the polyline using the existing method from MapController
+          return _decodeEncodedPolyline(polyline);
+        } else {
+          throw Exception('No route found: ${data['status']}');
+        }
+      } else {
+        throw Exception('Failed to get route: ${response.statusCode}');
+      }
+    } catch (e) {
+      print('Error getting route: $e');
+      // Fallback to straight line if API fails
+      return [origin, destination];
+    }
+  }
+
+  List<LatLng> _decodeEncodedPolyline(String encoded) {
+    List<LatLng> poly = [];
+    int index = 0, len = encoded.length;
+    int lat = 0, lng = 0;
+
+    while (index < len) {
+      int b, shift = 0, result = 0;
+      do {
+        b = encoded.codeUnitAt(index++) - 63;
+        result |= (b & 0x1f) << shift;
+        shift += 5;
+      } while (b >= 0x20);
+      int dlat = ((result & 1) != 0 ? ~(result >> 1) : (result >> 1));
+      lat += dlat;
+
+      shift = 0;
+      result = 0;
+      do {
+        b = encoded.codeUnitAt(index++) - 63;
+        result |= (b & 0x1f) << shift;
+        shift += 5;
+      } while (b >= 0x20);
+      int dlng = ((result & 1) != 0 ? ~(result >> 1) : (result >> 1));
+      lng += dlng;
+      LatLng p = LatLng((lat / 1E5).toDouble(), (lng / 1E5).toDouble());
+      poly.add(p);
+    }
+    return poly;
+  }
+
+  LatLngBounds _getBounds(List<LatLng> points) {
+    double? minLat, maxLat, minLng, maxLng;
+
+    for (LatLng point in points) {
+      minLat = minLat == null ? point.latitude : min(minLat, point.latitude);
+      maxLat = maxLat == null ? point.latitude : max(maxLat, point.latitude);
+      minLng = minLng == null ? point.longitude : min(minLng, point.longitude);
+      maxLng = maxLng == null ? point.longitude : max(maxLng, point.longitude);
+    }
+
+    return LatLngBounds(
+      southwest: LatLng(minLat!, minLng!),
+      northeast: LatLng(maxLat!, maxLng!),
     );
   }
 
@@ -766,6 +1504,38 @@ class _RideExpendableBottomSheetState extends State<RideExpendableBottomSheet> {
       initialDate: DateTime.now(),
       firstDate: DateTime.now(),
       lastDate: DateTime.now().add(const Duration(days: 30)),
+      builder: (context, child) {
+        return Theme(
+          data: Theme.of(context).copyWith(
+            colorScheme: Theme.of(context).colorScheme.copyWith(
+                  primary: const Color.fromARGB(
+                      255, 0, 0, 0), // Primary color for selected date
+                  onPrimary: Colors.white, // Text color on selected date
+                  surface: Theme.of(context).brightness == Brightness.dark
+                      ? const Color(0xFF242424)
+                      : Colors.white, // Background color
+                  onSurface: Theme.of(context).brightness == Brightness.dark
+                      ? Colors.white
+                      : const Color(0xff1D2D2B), // Text color for dates
+                  onSurfaceVariant:
+                      Theme.of(context).brightness == Brightness.dark
+                          ? Colors.grey[300]
+                          : Colors.grey[600], // Text color for other dates
+                ),
+            dialogBackgroundColor:
+                Theme.of(context).brightness == Brightness.dark
+                    ? const Color(0xFF242424)
+                    : Colors.white,
+            textButtonTheme: TextButtonThemeData(
+              style: TextButton.styleFrom(
+                foregroundColor:
+                    const Color.fromARGB(255, 0, 0, 0), // Button text color
+              ),
+            ),
+          ),
+          child: child!,
+        );
+      },
     );
 
     if (picked != null) {

@@ -259,13 +259,9 @@ class _FindingRiderWidgetState extends State<FindingRiderWidget> {
                                 //  widget.expandableKey.currentState?.contract();
                                 print(
                                     "======== ${rideController.tripDetails?.id}");
-                                print(
-                                    "rideController.carpoolTripDetails?.id: ${rideController.carpoolTripDetails?.id}");
 
                                 // Get the trip ID safely
-                                String? tripId =
-                                    rideController.tripDetails?.id ??
-                                        rideController.carpoolTripDetails?.id;
+                                String? tripId = rideController.tripDetails?.id;
 
                                 if (tripId == null) {
                                   Get.snackbar('Error', 'No trip ID found');

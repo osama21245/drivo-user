@@ -228,7 +228,7 @@ class CarpollMapController extends GetxController implements GetxService {
 
     Uint8List car = await convertAssetToUnit8List(
       Images.mapLocationIcon,
-      width: 250,
+      width: 350,
       blendColor: Colors.black,
       blendMode: BlendMode.srcATop,
     );
@@ -322,11 +322,16 @@ class CarpollMapController extends GetxController implements GetxService {
       LatLng centerBounds, double bearing,
       {double padding = 0.5}) async {
     bool keepZoomingOut = true;
+    const double minZoomLevel =
+        8.0; // Allow manual zooming while preventing excessive auto zoom out
+
     while (keepZoomingOut) {
       final LatLngBounds screenBounds = await controller!.getVisibleRegion();
       if (fits(bounds!, screenBounds)) {
         keepZoomingOut = false;
-        final double zoomLevel = await controller.getZoomLevel() - padding;
+        final double currentZoom = await controller.getZoomLevel();
+        final double zoomLevel =
+            (currentZoom - padding).clamp(minZoomLevel, 20.0);
         controller.moveCamera(CameraUpdate.newCameraPosition(CameraPosition(
           target: centerBounds,
           zoom: zoomLevel,
@@ -335,7 +340,8 @@ class CarpollMapController extends GetxController implements GetxService {
         break;
       } else {
         // Zooming out by 0.1 zoom level per iteration
-        final double zoomLevel = await controller.getZoomLevel() - 0.1;
+        final double currentZoom = await controller.getZoomLevel();
+        final double zoomLevel = (currentZoom - 0.1).clamp(minZoomLevel, 20.0);
         controller.moveCamera(CameraUpdate.newCameraPosition(CameraPosition(
           target: centerBounds,
           zoom: zoomLevel,
@@ -367,7 +373,7 @@ class CarpollMapController extends GetxController implements GetxService {
     // Apply black blend mode to current location icon
     Uint8List myIcon = await convertAssetToUnit8List(
       Images.mapLocationIcon,
-      width: 250,
+      width: 350,
       blendColor: Colors.black,
       blendMode: BlendMode.srcATop,
     );

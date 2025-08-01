@@ -117,6 +117,7 @@ class _AcceptingAndOngoingBottomSheetState
                                         Images.farePrice,
                                         height: 15,
                                         width: 15,
+                                        color: Theme.of(context).primaryColor,
                                       ),
                                       const SizedBox(
                                         width: Dimensions.paddingSizeSmall,
@@ -172,6 +173,7 @@ class _AcceptingAndOngoingBottomSheetState
                                         Images.paymentTypeIcon,
                                         height: 15,
                                         width: 15,
+                                        color: Theme.of(context).primaryColor,
                                       ),
                                       const SizedBox(
                                         width: Dimensions.paddingSizeSmall,
@@ -201,9 +203,10 @@ class _AcceptingAndOngoingBottomSheetState
                         ),
                         const SizedBox(height: Dimensions.paddingSizeDefault),
                         if (rideController.tripDetails != null &&
-                            rideController.tripDetails!.type ==
-                                'ride_request' &&
-                            !rideController.tripDetails!.isPaused!)
+                                rideController.tripDetails!.type ==
+                                    'ride_request' ||
+                            rideController.tripDetails!.type == 'carpool' &&
+                                !rideController.tripDetails!.isPaused!)
                           Center(
                             child: SliderButton(
                               action: () {

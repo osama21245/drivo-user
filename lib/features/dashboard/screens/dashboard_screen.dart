@@ -41,7 +41,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
         screen: const HomeScreen(),
       ),
       NavigationModel(
-          name: "Trips",
+          name: "carpool".tr,
           activeIcon: Images.carTripeIcon,
           inactiveIcon: Images.carTripeIcon,
           screen: SetDestinationCarPoolScreen()),
@@ -181,10 +181,10 @@ class CustomMenuItem extends StatelessWidget {
               children: [
                 Image.asset(
                   isSelected ? activeIcon : inActiveIcon,
-                  color: activeIcon == Images.carTripeIcon
-                      ? Colors.white
-                      : !isSelected
-                          ? Colors.white.withOpacity(0.5)
+                  color: activeIcon == Images.carTripeIcon && !isSelected
+                      ? Colors.white.withOpacity(0.5)
+                      : isSelected
+                          ? Colors.white
                           : null,
                   width: Dimensions.menuIconSize,
                   height: Dimensions.menuIconSize,

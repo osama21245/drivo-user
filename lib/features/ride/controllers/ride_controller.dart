@@ -686,8 +686,12 @@ class RideController extends GetxController implements GetxService {
         }
       } else if (currentRideStatus == AppConstants.completed ||
           currentRideStatus == AppConstants.cancelled) {
-        getFinalFare(carpoolTripDetails!.id!);
-        Get.off(() => const PaymentScreen());
+        if (carpoolTripDetails!.type != 'carpool') {
+          getFinalFare(carpoolTripDetails!.id!);
+          Get.off(() => const PaymentScreen());
+        } else {
+          Get.offAll(() => const DashboardScreen());
+        }
       } else {
         if (Get.find<LocationController>().getUserAddress() != null) {
           if (!fromRefresh) {
@@ -697,6 +701,8 @@ class RideController extends GetxController implements GetxService {
           Get.offAll(() => const AccessLocationScreen());
         }
       }
+      tripDetails = carpoolTripDetails;
+      carpollRouteId = null;
     } else {
       runningTrip = false;
       carpoolTripDetails = null;
