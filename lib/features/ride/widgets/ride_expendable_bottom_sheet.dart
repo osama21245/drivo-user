@@ -30,8 +30,11 @@ import 'package:http/http.dart' as http;
 class RideExpendableBottomSheet extends StatefulWidget {
   final GlobalKey<ExpandableBottomSheetState> expandableKey;
   final bool isCarpool;
-  const RideExpendableBottomSheet(
-      {super.key, required this.expandableKey, required this.isCarpool});
+  const RideExpendableBottomSheet({
+    super.key,
+    required this.expandableKey,
+    required this.isCarpool,
+  });
 
   @override
   State<RideExpendableBottomSheet> createState() =>
@@ -48,230 +51,259 @@ class _RideExpendableBottomSheetState extends State<RideExpendableBottomSheet> {
 
   @override
   Widget build(BuildContext context) {
-    return GetBuilder<RideController>(builder: (carRideController) {
-      return Container(
-        width: MediaQuery.of(context).size.width,
-        decoration: BoxDecoration(
-          color: Theme.of(context).canvasColor,
-          borderRadius: const BorderRadius.only(
-            topLeft: Radius.circular(Dimensions.paddingSizeDefault),
-            topRight: Radius.circular(Dimensions.paddingSizeDefault),
+    return GetBuilder<RideController>(
+      builder: (carRideController) {
+        return Container(
+          width: MediaQuery.of(context).size.width,
+          decoration: BoxDecoration(
+            color: Theme.of(context).canvasColor,
+            borderRadius: const BorderRadius.only(
+              topLeft: Radius.circular(Dimensions.paddingSizeDefault),
+              topRight: Radius.circular(Dimensions.paddingSizeDefault),
+            ),
+            boxShadow: [
+              BoxShadow(
+                color: Theme.of(context).hintColor,
+                blurRadius: 5,
+                spreadRadius: 1,
+                offset: const Offset(0, 2),
+              ),
+            ],
           ),
-          boxShadow: [
-            BoxShadow(
-              color: Theme.of(context).hintColor,
-              blurRadius: 5,
-              spreadRadius: 1,
-              offset: const Offset(0, 2),
-            )
-          ],
-        ),
-        child: Padding(
+          child: Padding(
             padding: const EdgeInsets.symmetric(
-                vertical: Dimensions.paddingSizeDefault),
-            child: Column(mainAxisSize: MainAxisSize.min, children: [
-              Container(
+              vertical: Dimensions.paddingSizeDefault,
+            ),
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                Container(
                   height: 7,
                   width: 70,
                   decoration: BoxDecoration(
                     color: Theme.of(context).highlightColor,
-                    borderRadius:
-                        BorderRadius.circular(Dimensions.paddingSizeExtraSmall),
-                  )),
-              const Padding(
-                padding: EdgeInsets.fromLTRB(
-                  Dimensions.paddingSizeDefault,
-                  Dimensions.paddingSizeSmall,
-                  Dimensions.paddingSizeDefault,
-                  Dimensions.paddingSizeDefault,
+                    borderRadius: BorderRadius.circular(
+                      Dimensions.paddingSizeExtraSmall,
+                    ),
+                  ),
                 ),
-                child: Row(mainAxisAlignment: MainAxisAlignment.spaceBetween),
-              ),
-              GetBuilder<RideController>(builder: (rideController) {
-                return GetBuilder<LocationController>(
-                    builder: (locationController) {
-                  String firstRoute = '';
-                  String secondRoute = '';
-                  List<dynamic> extraRoute = [];
-                  if (rideController.tripDetails?.intermediateAddresses !=
-                          null &&
-                      rideController.tripDetails?.intermediateAddresses !=
-                          '["",""]') {
-                    extraRoute = jsonDecode(
-                        rideController.tripDetails!.intermediateAddresses!);
-                    if (extraRoute.isNotEmpty) {
-                      firstRoute = extraRoute[0].toString();
-                    }
-                    if (extraRoute.isNotEmpty && extraRoute.length > 1) {
-                      secondRoute = extraRoute[1].toString();
-                    }
-                  }
+                const Padding(
+                  padding: EdgeInsets.fromLTRB(
+                    Dimensions.paddingSizeDefault,
+                    Dimensions.paddingSizeSmall,
+                    Dimensions.paddingSizeDefault,
+                    Dimensions.paddingSizeDefault,
+                  ),
+                  child: Row(mainAxisAlignment: MainAxisAlignment.spaceBetween),
+                ),
+                GetBuilder<RideController>(
+                  builder: (rideController) {
+                    return GetBuilder<LocationController>(
+                      builder: (locationController) {
+                        String firstRoute = '';
+                        String secondRoute = '';
+                        List<dynamic> extraRoute = [];
+                        if (rideController.tripDetails?.intermediateAddresses !=
+                                null &&
+                            rideController.tripDetails?.intermediateAddresses !=
+                                '["",""]') {
+                          extraRoute = jsonDecode(
+                            rideController.tripDetails!.intermediateAddresses!,
+                          );
+                          if (extraRoute.isNotEmpty) {
+                            firstRoute = extraRoute[0].toString();
+                          }
+                          if (extraRoute.isNotEmpty && extraRoute.length > 1) {
+                            secondRoute = extraRoute[1].toString();
+                          }
+                        }
 
-                  return Padding(
-                    padding: const EdgeInsets.symmetric(
-                        horizontal: Dimensions.paddingSizeDefault),
-                    child: Column(mainAxisSize: MainAxisSize.min, children: [
-                      (rideController.currentRideState == RideState.initial)
-                          ? (widget.isCarpool
-                              ? _buildCarpoolInitialWidget(locationController)
-                              : Column(
-                                  children: [
-                                    // Vehicle selection row
-                                    if (rideController.fareList.isNotEmpty)
-                                      Padding(
-                                        padding: const EdgeInsets.symmetric(
-                                            vertical: 8),
-                                        child: Text(
-                                          'Estimated Fare:  ' +
-                                              PriceConverter.convertPrice(
-                                                  rideController.estimatedFare),
-                                          style: textBold.copyWith(
-                                            fontSize: Dimensions.fontSizeLarge,
-                                            color:
-                                                Theme.of(context).primaryColor,
+                        return Padding(
+                          padding: const EdgeInsets.symmetric(
+                            horizontal: Dimensions.paddingSizeDefault,
+                          ),
+                          child: Column(
+                            mainAxisSize: MainAxisSize.min,
+                            children: [
+                              (rideController.currentRideState ==
+                                      RideState.initial)
+                                  ? (widget.isCarpool
+                                      ? _buildCarpoolInitialWidget(
+                                        locationController,
+                                      )
+                                      : Column(
+                                        children: [
+                                          // Vehicle selection row
+                                          if (rideController
+                                              .fareList
+                                              .isNotEmpty)
+                                            Padding(
+                                              padding:
+                                                  const EdgeInsets.symmetric(
+                                                    vertical: 8,
+                                                  ),
+                                              child: Text(
+                                                'Estimated Fare:  ' +
+                                                    PriceConverter.convertPrice(
+                                                      rideController
+                                                          .estimatedFare,
+                                                    ),
+                                                style: textBold.copyWith(
+                                                  fontSize:
+                                                      Dimensions.fontSizeLarge,
+                                                  color:
+                                                      Theme.of(
+                                                        context,
+                                                      ).primaryColor,
+                                                ),
+                                              ),
+                                            ),
+                                          const SizedBox(height: 10),
+                                          // The rest of the initial widget
+                                          InitialWidget(
+                                            expandableKey: widget.expandableKey,
                                           ),
-                                        ),
-                                      ),
-                                    const SizedBox(height: 10),
-                                    // The rest of the initial widget
-                                    InitialWidget(
-                                        expandableKey: widget.expandableKey),
-                                  ],
-                                ))
-                          : (rideController.currentRideState ==
-                                  RideState.riseFare)
-                              ? RaiseFareBottomSheet(
-                                  expandableKey: widget.expandableKey)
-                              : (rideController.currentRideState ==
+                                        ],
+                                      ))
+                                  : (rideController.currentRideState ==
+                                      RideState.riseFare)
+                                  ? RaiseFareBottomSheet(
+                                    expandableKey: widget.expandableKey,
+                                  )
+                                  : (rideController.currentRideState ==
                                       RideState.findingRider)
                                   ? FindingRiderWidget(
-                                      expandableKey: widget.expandableKey,
-                                      fromPage: FindingRide.ride)
+                                    expandableKey: widget.expandableKey,
+                                    fromPage: FindingRide.ride,
+                                  )
                                   : (rideController.currentRideState ==
-                                              RideState.acceptingRider ||
-                                          rideController.currentRideState ==
-                                              RideState.ongoingRide)
-                                      ? AcceptingAndOngoingBottomSheet(
-                                          firstRoute: firstRoute,
-                                          secondRoute: secondRoute,
-                                          expandableKey: widget.expandableKey,
-                                        )
-                                      : (rideController.currentRideState ==
-                                              RideState.otpSent)
-                                          ? OtpSentBottomSheet(
-                                              firstRoute: firstRoute,
-                                              secondRoute: secondRoute,
-                                              expandableKey:
-                                                  widget.expandableKey,
-                                            )
-                                          : (rideController.currentRideState ==
-                                                  RideState.ongoingRide)
-                                              ? GestureDetector(
-                                                  onTap: () {
-                                                    showDialog(
-                                                        context: context,
-                                                        builder: (_) {
-                                                          return ConfirmationDialogWidget(
-                                                            icon:
-                                                                Images.endTrip,
-                                                            description:
-                                                                'end_this_trip_at_your_destination'
-                                                                    .tr,
-                                                            onYesPressed:
-                                                                () async {
-                                                              Get.back();
-                                                              Get.dialog(
-                                                                  const ConfirmationTripDialog(
-                                                                      isStartedTrip:
-                                                                          false),
-                                                                  barrierDismissible:
-                                                                      false);
-                                                              await Future.delayed(
-                                                                  const Duration(
-                                                                      seconds:
-                                                                          5));
-                                                              Get.find<
-                                                                      RideController>()
-                                                                  .stopLocationRecord();
-                                                              rideController
-                                                                  .updateRideCurrentState(
-                                                                      RideState
-                                                                          .completeRide);
-                                                              Get.find<
-                                                                      MapController>()
-                                                                  .notifyMapController();
-                                                              Get.off(() =>
-                                                                  const PaymentScreen());
-                                                            },
-                                                          );
-                                                        });
-                                                  },
-                                                  child: Column(children: [
-                                                    TollTipWidget(
-                                                        title: 'trip_is_ongoing'
-                                                            .tr),
-                                                    const SizedBox(
-                                                        height: Dimensions
-                                                            .paddingSizeDefault),
-                                                    Padding(
-                                                      padding: const EdgeInsets
-                                                          .symmetric(
-                                                          vertical: Dimensions
-                                                              .paddingSizeDefault),
-                                                      child: Text.rich(TextSpan(
-                                                        style: textRegular.copyWith(
-                                                            fontSize: Dimensions
-                                                                .fontSizeLarge,
-                                                            color: Theme.of(
-                                                                    context)
-                                                                .textTheme
-                                                                .bodyMedium!
-                                                                .color!
-                                                                .withOpacity(
-                                                                    0.8)),
-                                                        children: [
-                                                          TextSpan(
-                                                            text:
-                                                                "the_car_just_arrived_at"
-                                                                    .tr,
-                                                            style: textRegular
-                                                                .copyWith(
-                                                                    fontSize:
-                                                                        Dimensions
-                                                                            .fontSizeDefault),
-                                                          ),
-                                                          TextSpan(
-                                                              text: " ".tr),
-                                                          TextSpan(
-                                                            text:
-                                                                "your_destination"
-                                                                    .tr,
-                                                            style: textMedium
-                                                                .copyWith(
-                                                              fontSize: Dimensions
-                                                                  .fontSizeDefault,
-                                                              color: Theme.of(
-                                                                      context)
-                                                                  .primaryColor,
-                                                            ),
-                                                          ),
-                                                        ],
-                                                      )),
-                                                    ),
-                                                    const ActivityScreenRiderDetails(),
-                                                    const SizedBox(
-                                                        height: Dimensions
-                                                            .paddingSizeDefault),
-                                                  ]),
-                                                )
-                                              : const SizedBox(),
-                    ]),
-                  );
-                });
-              }),
-            ])),
-      );
-    });
+                                          RideState.acceptingRider ||
+                                      rideController.currentRideState ==
+                                          RideState.ongoingRide)
+                                  ? AcceptingAndOngoingBottomSheet(
+                                    firstRoute: firstRoute,
+                                    secondRoute: secondRoute,
+                                    expandableKey: widget.expandableKey,
+                                  )
+                                  : (rideController.currentRideState ==
+                                      RideState.otpSent)
+                                  ? OtpSentBottomSheet(
+                                    firstRoute: firstRoute,
+                                    secondRoute: secondRoute,
+                                    expandableKey: widget.expandableKey,
+                                  )
+                                  : (rideController.currentRideState ==
+                                      RideState.ongoingRide)
+                                  ? GestureDetector(
+                                    onTap: () {
+                                      showDialog(
+                                        context: context,
+                                        builder: (_) {
+                                          return ConfirmationDialogWidget(
+                                            icon: Images.endTrip,
+                                            description:
+                                                'end_this_trip_at_your_destination'
+                                                    .tr,
+                                            onYesPressed: () async {
+                                              Get.back();
+                                              Get.dialog(
+                                                const ConfirmationTripDialog(
+                                                  isStartedTrip: false,
+                                                ),
+                                                barrierDismissible: false,
+                                              );
+                                              await Future.delayed(
+                                                const Duration(seconds: 5),
+                                              );
+                                              Get.find<RideController>()
+                                                  .stopLocationRecord();
+                                              rideController
+                                                  .updateRideCurrentState(
+                                                    RideState.completeRide,
+                                                  );
+                                              Get.find<MapController>()
+                                                  .notifyMapController();
+                                              Get.off(
+                                                () => const PaymentScreen(),
+                                              );
+                                            },
+                                          );
+                                        },
+                                      );
+                                    },
+                                    child: Column(
+                                      children: [
+                                        TollTipWidget(
+                                          title: 'trip_is_ongoing'.tr,
+                                        ),
+                                        const SizedBox(
+                                          height: Dimensions.paddingSizeDefault,
+                                        ),
+                                        Padding(
+                                          padding: const EdgeInsets.symmetric(
+                                            vertical:
+                                                Dimensions.paddingSizeDefault,
+                                          ),
+                                          child: Text.rich(
+                                            TextSpan(
+                                              style: textRegular.copyWith(
+                                                fontSize:
+                                                    Dimensions.fontSizeLarge,
+                                                color: Theme.of(context)
+                                                    .textTheme
+                                                    .bodyMedium!
+                                                    .color!
+                                                    .withOpacity(0.8),
+                                              ),
+                                              children: [
+                                                TextSpan(
+                                                  text:
+                                                      "the_car_just_arrived_at"
+                                                          .tr,
+                                                  style: textRegular.copyWith(
+                                                    fontSize:
+                                                        Dimensions
+                                                            .fontSizeDefault,
+                                                  ),
+                                                ),
+                                                TextSpan(text: " ".tr),
+                                                TextSpan(
+                                                  text: "your_destination".tr,
+                                                  style: textMedium.copyWith(
+                                                    fontSize:
+                                                        Dimensions
+                                                            .fontSizeDefault,
+                                                    color:
+                                                        Theme.of(
+                                                          context,
+                                                        ).primaryColor,
+                                                  ),
+                                                ),
+                                              ],
+                                            ),
+                                          ),
+                                        ),
+                                        const ActivityScreenRiderDetails(),
+                                        const SizedBox(
+                                          height: Dimensions.paddingSizeDefault,
+                                        ),
+                                      ],
+                                    ),
+                                  )
+                                  : const SizedBox(),
+                            ],
+                          ),
+                        );
+                      },
+                    );
+                  },
+                ),
+              ],
+            ),
+          ),
+        );
+      },
+    );
   }
 
   // Carpool UI Methods
@@ -339,63 +371,65 @@ class _RideExpendableBottomSheetState extends State<RideExpendableBottomSheet> {
               Container(
                 width: double.infinity,
                 child: ElevatedButton(
-                  onPressed: rideController.isSearchingTrips
-                      ? null
-                      : () => _searchForCarpoolRides(rideController),
+                  onPressed:
+                      rideController.isSearchingTrips
+                          ? null
+                          : () => _searchForCarpoolRides(rideController),
                   style: ElevatedButton.styleFrom(
                     backgroundColor: Theme.of(context).primaryColor,
                     foregroundColor: Colors.white,
                     padding: const EdgeInsets.symmetric(
-                        vertical: Dimensions.paddingSizeSmall),
+                      vertical: Dimensions.paddingSizeSmall,
+                    ),
                     shape: RoundedRectangleBorder(
-                      borderRadius:
-                          BorderRadius.circular(Dimensions.radiusDefault),
+                      borderRadius: BorderRadius.circular(
+                        Dimensions.radiusDefault,
+                      ),
                     ),
                     elevation: 4,
-                    shadowColor:
-                        Theme.of(context).primaryColor.withOpacity(0.3),
+                    shadowColor: Theme.of(
+                      context,
+                    ).primaryColor.withOpacity(0.3),
                   ),
-                  child: rideController.isSearchingTrips
-                      ? Row(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          children: [
-                            SizedBox(
-                              width: 20,
-                              height: 20,
-                              child: CircularProgressIndicator(
-                                strokeWidth: 2,
-                                valueColor:
-                                    AlwaysStoppedAnimation<Color>(Colors.white),
+                  child:
+                      rideController.isSearchingTrips
+                          ? Row(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: [
+                              SizedBox(
+                                width: 20,
+                                height: 20,
+                                child: CircularProgressIndicator(
+                                  strokeWidth: 2,
+                                  valueColor: AlwaysStoppedAnimation<Color>(
+                                    Colors.white,
+                                  ),
+                                ),
                               ),
-                            ),
-                            const SizedBox(width: 8),
-                            Text(
-                              'Searching for rides...',
-                              style: textMedium.copyWith(
-                                fontSize: Dimensions.fontSizeSmall,
-                                color: Colors.white,
+                              const SizedBox(width: 8),
+                              Text(
+                                'Searching for rides...',
+                                style: textMedium.copyWith(
+                                  fontSize: Dimensions.fontSizeSmall,
+                                  color: Colors.white,
+                                ),
                               ),
-                            ),
-                          ],
-                        )
-                      : Row(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          children: [
-                            Icon(
-                              Icons.search,
-                              color: Colors.white,
-                              size: 20,
-                            ),
-                            const SizedBox(width: 8),
-                            Text(
-                              'Search for Carpool Rides',
-                              style: textBold.copyWith(
-                                fontSize: Dimensions.fontSizeSmall,
-                                color: Colors.white,
+                            ],
+                          )
+                          : Row(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: [
+                              Icon(Icons.search, color: Colors.white, size: 20),
+                              const SizedBox(width: 8),
+                              Text(
+                                'Search for Carpool Rides',
+                                style: textBold.copyWith(
+                                  fontSize: Dimensions.fontSizeSmall,
+                                  color: Colors.white,
+                                ),
                               ),
-                            ),
-                          ],
-                        ),
+                            ],
+                          ),
                 ),
               ),
             ],
@@ -418,8 +452,11 @@ class _RideExpendableBottomSheetState extends State<RideExpendableBottomSheet> {
           // Header
           Row(
             children: [
-              Icon(Icons.route,
-                  size: 16, color: Theme.of(context).primaryColor),
+              Icon(
+                Icons.route,
+                size: 16,
+                color: Theme.of(context).primaryColor,
+              ),
               const SizedBox(width: Dimensions.paddingSizeExtraSmall),
               Text(
                 'Route Summary',
@@ -452,7 +489,8 @@ class _RideExpendableBottomSheetState extends State<RideExpendableBottomSheet> {
                       locationController.fromAddress?.address ??
                           'Loading pickup location...',
                       style: textRegular.copyWith(
-                          fontSize: Dimensions.fontSizeSmall),
+                        fontSize: Dimensions.fontSizeSmall,
+                      ),
                       maxLines: 2,
                       overflow: TextOverflow.ellipsis,
                     ),
@@ -483,7 +521,8 @@ class _RideExpendableBottomSheetState extends State<RideExpendableBottomSheet> {
                       locationController.toAddress?.address ??
                           'Loading destination...',
                       style: textRegular.copyWith(
-                          fontSize: Dimensions.fontSizeSmall),
+                        fontSize: Dimensions.fontSizeSmall,
+                      ),
                       maxLines: 2,
                       overflow: TextOverflow.ellipsis,
                     ),
@@ -504,9 +543,10 @@ class _RideExpendableBottomSheetState extends State<RideExpendableBottomSheet> {
         _buildParameterField(
           icon: Icons.calendar_today,
           label: 'select_date'.tr,
-          value: rideController.selectedDate.isEmpty
-              ? 'tap_to_select_date'.tr
-              : rideController.selectedDate,
+          value:
+              rideController.selectedDate.isEmpty
+                  ? 'tap_to_select_date'.tr
+                  : rideController.selectedDate,
           onTap: () => _selectDate(rideController),
         ),
         const SizedBox(height: Dimensions.paddingSizeExtraSmall),
@@ -534,7 +574,8 @@ class _RideExpendableBottomSheetState extends State<RideExpendableBottomSheet> {
                 items: ['1', '2', '3'],
                 onChanged: (value) {
                   rideController.setCarpoolSearchParameters(
-                      seats: int.parse(value!));
+                    seats: int.parse(value!),
+                  );
                 },
               ),
             ),
@@ -614,28 +655,31 @@ class _RideExpendableBottomSheetState extends State<RideExpendableBottomSheet> {
                   shape: BoxShape.circle,
                   color: Colors.grey[200],
                   border: Border.all(
-                      color: Theme.of(context).primaryColor, width: 2),
+                    color: Theme.of(context).primaryColor,
+                    width: 2,
+                  ),
                 ),
-                child: (trip.driver.profileImage != null &&
-                        trip.driver.profileImage!.isNotEmpty)
-                    ? ClipOval(
-                        child: Image.network(
-                          trip.driver.profileImage!,
-                          fit: BoxFit.cover,
-                          errorBuilder: (context, error, stackTrace) {
-                            return Icon(
-                              Icons.person,
-                              size: 30,
-                              color: Theme.of(context).primaryColor,
-                            );
-                          },
+                child:
+                    (trip.driver.profileImage != null &&
+                            trip.driver.profileImage!.isNotEmpty)
+                        ? ClipOval(
+                          child: Image.network(
+                            trip.driver.profileImage!,
+                            fit: BoxFit.cover,
+                            errorBuilder: (context, error, stackTrace) {
+                              return Icon(
+                                Icons.person,
+                                size: 30,
+                                color: Theme.of(context).primaryColor,
+                              );
+                            },
+                          ),
+                        )
+                        : Icon(
+                          Icons.person,
+                          size: 30,
+                          color: Theme.of(context).primaryColor,
                         ),
-                      )
-                    : Icon(
-                        Icons.person,
-                        size: 30,
-                        color: Theme.of(context).primaryColor,
-                      ),
               ),
               const SizedBox(width: Dimensions.paddingSizeSmall),
 
@@ -656,11 +700,7 @@ class _RideExpendableBottomSheetState extends State<RideExpendableBottomSheet> {
                     const SizedBox(height: 2),
                     Row(
                       children: [
-                        Icon(
-                          Icons.person,
-                          size: 14,
-                          color: Colors.grey[600],
-                        ),
+                        Icon(Icons.person, size: 14, color: Colors.grey[600]),
                         const SizedBox(width: 4),
                         Text(
                           trip.driver.gender.isNotEmpty
@@ -780,11 +820,7 @@ class _RideExpendableBottomSheetState extends State<RideExpendableBottomSheet> {
               children: [
                 Row(
                   children: [
-                    Icon(
-                      Icons.route,
-                      size: 16,
-                      color: Colors.blue[700],
-                    ),
+                    Icon(Icons.route, size: 16, color: Colors.blue[700]),
                     const SizedBox(width: Dimensions.paddingSizeExtraSmall),
                     Text(
                       'Route',
@@ -909,11 +945,7 @@ class _RideExpendableBottomSheetState extends State<RideExpendableBottomSheet> {
               ),
               child: Row(
                 children: [
-                  Icon(
-                    Icons.info_outline,
-                    size: 16,
-                    color: Colors.orange[700],
-                  ),
+                  Icon(Icons.info_outline, size: 16, color: Colors.orange[700]),
                   const SizedBox(width: Dimensions.paddingSizeExtraSmall),
                   Expanded(
                     child: Text(
@@ -936,11 +968,7 @@ class _RideExpendableBottomSheetState extends State<RideExpendableBottomSheet> {
               Expanded(
                 child: ElevatedButton.icon(
                   onPressed: () => _showTripRoute(trip),
-                  icon: Icon(
-                    Icons.map,
-                    size: 18,
-                    color: Colors.white,
-                  ),
+                  icon: Icon(Icons.map, size: 18, color: Colors.white),
                   label: Text(
                     'View Route',
                     style: textMedium.copyWith(
@@ -956,8 +984,9 @@ class _RideExpendableBottomSheetState extends State<RideExpendableBottomSheet> {
                       vertical: Dimensions.paddingSizeExtraSmall,
                     ),
                     shape: RoundedRectangleBorder(
-                      borderRadius:
-                          BorderRadius.circular(Dimensions.radiusSmall),
+                      borderRadius: BorderRadius.circular(
+                        Dimensions.radiusSmall,
+                      ),
                     ),
                   ),
                 ),
@@ -966,11 +995,7 @@ class _RideExpendableBottomSheetState extends State<RideExpendableBottomSheet> {
               Expanded(
                 child: ElevatedButton.icon(
                   onPressed: () => _selectTrip(trip, rideController),
-                  icon: Icon(
-                    Icons.check_circle,
-                    size: 18,
-                    color: Colors.white,
-                  ),
+                  icon: Icon(Icons.check_circle, size: 18, color: Colors.white),
                   label: Text(
                     'Join Trip',
                     style: textMedium.copyWith(
@@ -986,8 +1011,9 @@ class _RideExpendableBottomSheetState extends State<RideExpendableBottomSheet> {
                       vertical: Dimensions.paddingSizeExtraSmall,
                     ),
                     shape: RoundedRectangleBorder(
-                      borderRadius:
-                          BorderRadius.circular(Dimensions.radiusSmall),
+                      borderRadius: BorderRadius.circular(
+                        Dimensions.radiusSmall,
+                      ),
                     ),
                   ),
                 ),
@@ -1085,9 +1111,10 @@ class _RideExpendableBottomSheetState extends State<RideExpendableBottomSheet> {
     List<String> restrictions = [];
 
     if (trip.allowedGender != 'both') {
-      String genderText = trip.allowedGender.isNotEmpty
-          ? '${trip.allowedGender[0].toUpperCase()}${trip.allowedGender.substring(1)}'
-          : 'Unknown';
+      String genderText =
+          trip.allowedGender.isNotEmpty
+              ? '${trip.allowedGender[0].toUpperCase()}${trip.allowedGender.substring(1)}'
+              : 'Unknown';
       restrictions.add('$genderText only');
     }
 
@@ -1143,11 +1170,21 @@ class _RideExpendableBottomSheetState extends State<RideExpendableBottomSheet> {
     );
 
     try {
-      // Get the actual route using Google Maps Directions API
-      List<LatLng> routePoints = await _getRoutePolyline(
-        LatLng(trip.dropoffMatchPoint.lat, trip.dropoffMatchPoint.lng),
-        LatLng(trip.pickupMatchPoint.lat, trip.pickupMatchPoint.lng),
-      );
+      // Use the encoded polyline from the trip data if available
+      List<LatLng> routePoints = [];
+
+      if (trip.encodedPolyline != null && trip.encodedPolyline!.isNotEmpty) {
+        // Decode the polyline from the trip data
+        routePoints = _decodeEncodedPolyline(trip.encodedPolyline!);
+        print('Using encoded polyline from trip data: ${trip.encodedPolyline}');
+      } else {
+        // Fallback to Google Maps Directions API if no encoded polyline
+        print('No encoded polyline found, using Google Maps API');
+        routePoints = await _getRoutePolyline(
+          LatLng(trip.dropoffMatchPoint.lat, trip.dropoffMatchPoint.lng),
+          LatLng(trip.pickupMatchPoint.lat, trip.pickupMatchPoint.lng),
+        );
+      }
 
       // Close loading dialog
       Navigator.of(context).pop();
@@ -1170,8 +1207,9 @@ class _RideExpendableBottomSheetState extends State<RideExpendableBottomSheet> {
                 children: [
                   // Header
                   Container(
-                    padding:
-                        const EdgeInsets.all(Dimensions.paddingSizeDefault),
+                    padding: const EdgeInsets.all(
+                      Dimensions.paddingSizeDefault,
+                    ),
                     decoration: BoxDecoration(
                       color: Theme.of(context).primaryColor,
                       borderRadius: const BorderRadius.only(
@@ -1181,11 +1219,7 @@ class _RideExpendableBottomSheetState extends State<RideExpendableBottomSheet> {
                     ),
                     child: Row(
                       children: [
-                        Icon(
-                          Icons.route,
-                          color: Colors.white,
-                          size: 24,
-                        ),
+                        Icon(Icons.route, color: Colors.white, size: 24),
                         const SizedBox(width: Dimensions.paddingSizeSmall),
                         Expanded(
                           child: Text(
@@ -1198,10 +1232,7 @@ class _RideExpendableBottomSheetState extends State<RideExpendableBottomSheet> {
                         ),
                         IconButton(
                           onPressed: () => Navigator.of(context).pop(),
-                          icon: Icon(
-                            Icons.close,
-                            color: Colors.white,
-                          ),
+                          icon: Icon(Icons.close, color: Colors.white),
                         ),
                       ],
                     ),
@@ -1229,10 +1260,13 @@ class _RideExpendableBottomSheetState extends State<RideExpendableBottomSheet> {
                         markers: {
                           Marker(
                             markerId: const MarkerId('pickup'),
-                            position: LatLng(trip.pickupMatchPoint.lat,
-                                trip.pickupMatchPoint.lng),
+                            position: LatLng(
+                              trip.pickupMatchPoint.lat,
+                              trip.pickupMatchPoint.lng,
+                            ),
                             icon: BitmapDescriptor.defaultMarkerWithHue(
-                                BitmapDescriptor.hueGreen),
+                              BitmapDescriptor.hueGreen,
+                            ),
                             infoWindow: InfoWindow(
                               title: 'Pickup',
                               snippet: trip.pickupAddress,
@@ -1240,10 +1274,13 @@ class _RideExpendableBottomSheetState extends State<RideExpendableBottomSheet> {
                           ),
                           Marker(
                             markerId: const MarkerId('dropoff'),
-                            position: LatLng(trip.dropoffMatchPoint.lat,
-                                trip.dropoffMatchPoint.lng),
+                            position: LatLng(
+                              trip.dropoffMatchPoint.lat,
+                              trip.dropoffMatchPoint.lng,
+                            ),
                             icon: BitmapDescriptor.defaultMarkerWithHue(
-                                BitmapDescriptor.hueRed),
+                              BitmapDescriptor.hueRed,
+                            ),
                             infoWindow: InfoWindow(
                               title: 'Destination',
                               snippet: trip.dropoffAddress,
@@ -1295,12 +1332,15 @@ class _RideExpendableBottomSheetState extends State<RideExpendableBottomSheet> {
   }
 
   Future<List<LatLng>> _getRoutePolyline(
-      LatLng origin, LatLng destination) async {
+    LatLng origin,
+    LatLng destination,
+  ) async {
     try {
       // Use Google Maps Directions API to get the actual route
       final String apiKey =
           'AIzaSyCeF4BHLDezqD1pH7mlzxEchtX962QU9Os'; // From AppConstants
-      final String url = 'https://maps.googleapis.com/maps/api/directions/json?'
+      final String url =
+          'https://maps.googleapis.com/maps/api/directions/json?'
           'origin=${origin.latitude},${origin.longitude}'
           '&destination=${destination.latitude},${destination.longitude}'
           '&key=$apiKey';
@@ -1473,24 +1513,28 @@ class _RideExpendableBottomSheetState extends State<RideExpendableBottomSheet> {
             isExpanded: true,
             underline: const SizedBox(),
             dropdownColor: Colors.white,
-            icon:
-                Icon(Icons.arrow_drop_down, size: 16, color: Colors.grey[600]),
+            icon: Icon(
+              Icons.arrow_drop_down,
+              size: 16,
+              color: Colors.grey[600],
+            ),
             style: textRegular.copyWith(
               fontSize: Dimensions.fontSizeSmall,
               color: Colors.black87,
             ),
-            items: items.map((String item) {
-              return DropdownMenuItem<String>(
-                value: item,
-                child: Text(
-                  item.capitalizeFirst!,
-                  style: textRegular.copyWith(
-                    fontSize: Dimensions.fontSizeSmall,
-                    color: Colors.black87,
-                  ),
-                ),
-              );
-            }).toList(),
+            items:
+                items.map((String item) {
+                  return DropdownMenuItem<String>(
+                    value: item,
+                    child: Text(
+                      item.capitalizeFirst!,
+                      style: textRegular.copyWith(
+                        fontSize: Dimensions.fontSizeSmall,
+                        color: Colors.black87,
+                      ),
+                    ),
+                  );
+                }).toList(),
             onChanged: onChanged,
           ),
         ],
@@ -1503,33 +1547,43 @@ class _RideExpendableBottomSheetState extends State<RideExpendableBottomSheet> {
       context: context,
       initialDate: DateTime.now(),
       firstDate: DateTime.now(),
-      lastDate: DateTime.now().add(const Duration(days: 30)),
+      lastDate: DateTime.now().add(const Duration(days: 60)),
       builder: (context, child) {
         return Theme(
           data: Theme.of(context).copyWith(
             colorScheme: Theme.of(context).colorScheme.copyWith(
-                  primary: const Color.fromARGB(
-                      255, 0, 0, 0), // Primary color for selected date
-                  onPrimary: Colors.white, // Text color on selected date
-                  surface: Theme.of(context).brightness == Brightness.dark
+              primary: const Color.fromARGB(
+                255,
+                0,
+                0,
+                0,
+              ), // Primary color for selected date
+              onPrimary: Colors.white, // Text color on selected date
+              surface:
+                  Theme.of(context).brightness == Brightness.dark
                       ? const Color(0xFF242424)
                       : Colors.white, // Background color
-                  onSurface: Theme.of(context).brightness == Brightness.dark
+              onSurface:
+                  Theme.of(context).brightness == Brightness.dark
                       ? Colors.white
                       : const Color(0xff1D2D2B), // Text color for dates
-                  onSurfaceVariant:
-                      Theme.of(context).brightness == Brightness.dark
-                          ? Colors.grey[300]
-                          : Colors.grey[600], // Text color for other dates
-                ),
+              onSurfaceVariant:
+                  Theme.of(context).brightness == Brightness.dark
+                      ? Colors.grey[300]
+                      : Colors.grey[600], // Text color for other dates
+            ),
             dialogBackgroundColor:
                 Theme.of(context).brightness == Brightness.dark
                     ? const Color(0xFF242424)
                     : Colors.white,
             textButtonTheme: TextButtonThemeData(
               style: TextButton.styleFrom(
-                foregroundColor:
-                    const Color.fromARGB(255, 0, 0, 0), // Button text color
+                foregroundColor: const Color.fromARGB(
+                  255,
+                  0,
+                  0,
+                  0,
+                ), // Button text color
               ),
             ),
           ),
@@ -1549,7 +1603,9 @@ class _RideExpendableBottomSheetState extends State<RideExpendableBottomSheet> {
     if (rideController.pickupAddress == null ||
         rideController.destinationAddress == null) {
       Get.snackbar(
-          'Error', 'Please select both pickup and destination locations');
+        'Error',
+        'Please select both pickup and destination locations',
+      );
       return;
     }
 
@@ -1575,8 +1631,8 @@ class _RideExpendableBottomSheetState extends State<RideExpendableBottomSheet> {
       );
 
       // Make the API call using RideController's poolService
-      FindMatchResponse? response =
-          await rideController.poolService.findMatchingRides(request);
+      FindMatchResponse? response = await rideController.poolService
+          .findMatchingRides(request);
 
       // Process the response
       if (response != null && response.responseCode == 'default_200') {
@@ -1589,13 +1645,16 @@ class _RideExpendableBottomSheetState extends State<RideExpendableBottomSheet> {
           Get.snackbar('No Rides Found', 'Try different route or date');
         } else {
           print(
-              'Found ${rideController.availableTrips.length} rides successfully');
+            'Found ${rideController.availableTrips.length} rides successfully',
+          );
         }
       } else {
         rideController.availableTrips.clear();
         rideController.update();
         Get.snackbar(
-            'Error', response?.message ?? 'Failed to search for trips');
+          'Error',
+          response?.message ?? 'Failed to search for trips',
+        );
       }
     } catch (e) {
       rideController.availableTrips.clear();

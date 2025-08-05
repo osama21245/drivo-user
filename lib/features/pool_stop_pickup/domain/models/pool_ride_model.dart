@@ -22,6 +22,7 @@ class PoolRide {
   final String allowedGender;
   final int allowedAgeMin;
   final int allowedAgeMax;
+  final String? encodedPolyline;
 
   PoolRide({
     required this.routeId,
@@ -43,6 +44,7 @@ class PoolRide {
     required this.allowedGender,
     required this.allowedAgeMin,
     required this.allowedAgeMax,
+    this.encodedPolyline,
   });
 
   factory PoolRide.fromJson(Map<String, dynamic> json) {
@@ -68,6 +70,7 @@ class PoolRide {
         allowedGender: json['allowed_gender'] ?? '',
         allowedAgeMin: json['allowed_age_min'] ?? 0,
         allowedAgeMax: json['allowed_age_max'] ?? 0,
+        encodedPolyline: json['encoded_polyline'],
       );
     } catch (e) {
       print('Error parsing PoolRide: $e');
@@ -97,6 +100,7 @@ class PoolRide {
       'allowed_gender': allowedGender,
       'allowed_age_min': allowedAgeMin,
       'allowed_age_max': allowedAgeMax,
+      'encoded_polyline': encodedPolyline,
     };
   }
 }
